@@ -145,7 +145,7 @@
         // LEAGUE DATA STORAGE ARRAY
         // EDIT SCORES HERE: Replace null with numbers (e.g., homeScore: 12, awayScore: 7)
         const games = [
-            { id: 1, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 2", home: "Team Zeshan", away: "Team Ali", homeScore: null, awayScore: null },
+            { id: 1, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 2", home: "Team Zeshan", away: "Team Ali", homeScore: 1, awayScore: 1 },
             { id: 2, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 3", home: "Team Yasir", away: "Team Yusuf", homeScore: null, awayScore: null },
             { id: 3, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 4", home: "Team Emad", away: "Team Zohaid", homeScore: null, awayScore: null },
             { id: 4, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 2", home: "Team Ali", away: "Team Emad", homeScore: null, awayScore: null },
