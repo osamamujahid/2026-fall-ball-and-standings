@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>League Portal & Live Standings</title>
-    <!-- Tailwind CSS for modern, clean UI layout styling -->
+    <!-- Tailwind CSS Engine for visual framework layout styling -->
     <script src="https://jsdelivr.net"></script>
     <style>
         .score-input::-webkit-outer-spin-button,
@@ -139,6 +139,7 @@
     </main>
 
     <script>
+        // Data feed URL reading configuration directly from your spreadsheet integration
         const GOOGLE_SHEET_CSV_URL = "https://google.com";
 
         const matches = [
@@ -154,8 +155,8 @@
             { id: 10, date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 2", home: "Team Zeshan", away: "Team Yusuf" },
             { id: 11, date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 1", home: "Team Ali", away: "Team Zohaid" },
             { id: 12, date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 2", home: "Team Emad", away: "Team Zeshan" },
-            { id: 13, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Yasir", away: "Team Yusuf" },
 Use code with caution.
+{ id: 13, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Yasir", away: "Team Yusuf" },
 { id: 14, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Zeshan", away: "Team Emad" },
 { id: 15, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Ali", away: "Team Zohaid" },
 { id: 16, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Emad", away: "Team Yasir" },
@@ -330,5 +331,6 @@ tbody.appendChild(row);
 }
 window.addEventListener("DOMContentLoaded", () => {
 fetchSpreadsheetData();
+// Automatically scans your spreadsheet background feed every 60 seconds
 setInterval(fetchSpreadsheetData, 60000);
 });
