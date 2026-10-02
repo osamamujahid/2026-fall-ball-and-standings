@@ -1,3 +1,5 @@
+html
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -331,6 +333,5 @@ tbody.appendChild(row);
 }
 window.addEventListener("DOMContentLoaded", () => {
 fetchSpreadsheetData();
-// Automatically scans your spreadsheet background feed every 60 seconds
 setInterval(fetchSpreadsheetData, 60000);
 });
