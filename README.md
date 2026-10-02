@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,120 +20,122 @@
 
     <!-- Header Section -->
     <header class="bg-blue-900 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-3xl font-bold tracking-tight">League Management Hub</h1>
-                <p class="text-blue-200 text-sm mt-1">Schedules, Live Standings & Venue Directories</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="resetAllScores()" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded transition text-sm shadow">
-                    Clear All Scores
-                </button>
-            </div>
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <h1 class="text-3xl font-bold tracking-tight">League Management Hub</h1>
+            <p class="text-blue-200 text-sm mt-1">Schedules, Live Standings & Venue Directories</p>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
         
-        <!-- LEFT/CENTER COLUMNS: Schedule & Facilities (Takes 2 cols on wide screens) -->
-        <div class="lg:col-span-2 space-y-8">
+        <!-- TOP SECTION: Live Standings Leaderboard (Full Width at Top) -->
+        <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 bg-gray-100 border-b border-gray-200">
+                <h2 class="text-xl font-bold text-gray-900">Live Standings Leaderboard</h2>
+                <p class="text-xs text-gray-500 mt-0.5">Win: 2 PTS | Tie: 1 PT | Loss: 0 PTS</p>
+            </div>
             
-            <!-- Weather & Fields Widget Panel -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    ☀️ Field Venues & Weather Outlook
-                </h2>
-                
-                <!-- Weather Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div class="p-4 bg-blue-50 border border-blue-100 rounded-lg flex justify-between items-center">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-500 text-[11px] font-bold uppercase tracking-wider border-b border-gray-200 text-center">
+                            <th class="py-3 px-3 text-left w-12">Pos</th>
+                            <th class="py-3 px-4 text-left">Team</th>
+                            <th class="py-3 px-2">GP</th>
+                            <th class="py-3 px-2">W</th>
+                            <th class="py-3 px-2">T</th>
+                            <th class="py-3 px-2">L</th>
+                            <th class="py-3 px-2">RS</th>
+                            <th class="py-3 px-2">RA</th>
+                            <th class="py-3 px-2">Diff</th>
+                            <th class="py-3 px-4 text-blue-950 bg-blue-50/50">PTS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="standings-rows" class="divide-y divide-gray-100 text-sm text-center">
+                        <!-- Rows loaded and sorted dynamically via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-4 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 text-center">
+                Tie-breaker logic ranks higher Run Differential (Diff) if points match.
+            </div>
+        </section>
+
+        <!-- BOTTOM SECTION: Two Column Split Layout (Schedule left, Venue details right) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- LEFT/CENTER: Schedule & Score Entry (Takes 2 cols) -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-4 bg-gray-100 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div>
-                            <p class="font-semibold text-blue-900 text-sm">Mississauga Grounds</p>
-                            <p class="text-xs text-blue-700 mt-0.5">Dunton & Brickyard Status</p>
+                            <h2 class="text-xl font-bold text-gray-900">Interactive League Schedule</h2>
+                            <p class="text-xs text-gray-500 mt-0.5">Input scores to update standings live</p>
                         </div>
-                        <div class="text-right">
-                            <span class="text-xl font-bold text-blue-900">18°C</span>
-                            <span class="block text-[10px] uppercase font-bold text-green-600 tracking-wider">Clear & Playable</span>
+                        <!-- Search Box Filter Bar Component -->
+                        <div class="w-full sm:w-64">
+                            <input type="text" id="schedule-search" oninput="filterSchedule(this.value)" placeholder="🔍 Search team, diamond, or date..." 
+                                class="w-full px-3 py-1.5 text-sm bg-white border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
-                    <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-lg flex justify-between items-center">
-                        <div>
-                            <p class="font-semibold text-indigo-900 text-sm">Brampton Grounds</p>
-                            <p class="text-xs text-indigo-700 mt-0.5">CAA Centre Complex Status</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xl font-bold text-indigo-900">17°C</span>
-                            <span class="block text-[10px] uppercase font-bold text-green-600 tracking-wider">Clear & Playable</span>
-                        </div>
+
+                    <div class="divide-y divide-gray-100" id="schedule-container">
+                        <!-- Schedule items will be rendered here dynamically via JS -->
                     </div>
-                </div>
-
-                <!-- Navigation Directories -->
-                <p class="text-xs font-semibold uppercase text-gray-400 tracking-wider mb-2">Venue Navigation Directories</p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                    <a href="https://www.mississauga.ca/events-and-attractions/parks/dunton-athletic-fields/" target="_blank" class="p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded block transition text-center">
-                        <span class="font-bold text-gray-900 block mb-0.5">Dunton Athletic Fields</span>
-                        <span class="text-gray-500">6180 Kennedy Rd, Mississauga</span>
-                    </a>
-                    <a href="https://www.mississauga.ca/events-and-attractions/parks/brickyard-park/" target="_blank" class="p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded block transition text-center">
-                        <span class="font-bold text-gray-900 block mb-0.5">Brickyard Park</span>
-                        <span class="text-gray-500">3061 Clayhill Rd, Mississauga</span>
-                    </a>
-                    <a href="https://caacentre.com/" target="_blank" class="p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded block transition text-center">
-                        <span class="font-bold text-gray-900 block mb-0.5">CAA Centre Complex</span>
-                        <span class="text-gray-500">7575 Kennedy Rd S, Brampton</span>
-                    </a>
-                </div>
-            </section>
-
-            <!-- Schedule & Score Entry Panel -->
-            <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="px-6 py-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center flex-wrap gap-2">
-                    <h2 class="text-xl font-bold text-gray-900">Interactive League Schedule</h2>
-                    <span class="text-xs bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-medium">Input scores to update standings live</span>
-                </div>
-
-                <div class="divide-y divide-gray-100" id="schedule-container">
-                    <!-- Schedule items will be rendered here dynamically via JS -->
-                </div>
-            </section>
-        </div>
-
-        <!-- RIGHT COLUMN: Standings Table Leaderboard (Expanded to fit new structural breakdown) -->
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden lg:sticky lg:top-8">
-                <div class="px-6 py-4 bg-gray-100 border-b border-gray-200">
-                    <h2 class="text-xl font-bold text-gray-900">Live Standings Leaderboard</h2>
-                    <p class="text-xs text-gray-500 mt-0.5">Win: 2 PTS | Tie: 1 PT | Loss: 0 PTS</p>
-                </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-500 text-[11px] font-bold uppercase tracking-wider border-b border-gray-200 text-center">
-                                <th class="py-3 px-3 text-left w-12">Pos</th>
-                                <th class="py-3 px-4 text-left">Team</th>
-                                <th class="py-3 px-2">GP</th>
-                                <th class="py-3 px-2">W</th>
-                                <th class="py-3 px-2">T</th>
-                                <th class="py-3 px-2">L</th>
-                                <th class="py-3 px-2">RS</th>
-                                <th class="py-3 px-2">RA</th>
-                                <th class="py-3 px-2">Diff</th>
-                                <th class="py-3 px-4 text-blue-950 bg-blue-50/50">PTS</th>
-                            </tr>
-                        </thead>
-                        <tbody id="standings-rows" class="divide-y divide-gray-100 text-sm text-center">
-                            <!-- Rows loaded and sorted dynamically via JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Footer breakdown component within standings -->
-                <div class="p-4 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 text-center">
-                    Tie-breaker logic ranks higher Run Differential (Diff) if points match.
                 </div>
             </div>
+
+            <!-- RIGHT: Weather & Venue Directories (Takes 1 col) -->
+            <div class="space-y-6">
+                <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        ☀️ Field Venues & Weather Outlook
+                    </h2>
+                    
+                    <!-- Weather Cards -->
+                    <div class="space-y-3 mb-6">
+                        <div class="p-4 bg-blue-50 border border-blue-100 rounded-lg flex justify-between items-center">
+                            <div>
+                                <p class="font-semibold text-blue-900 text-sm">Mississauga Grounds</p>
+                                <p class="text-xs text-blue-700 mt-0.5">Dunton & Brickyard Status</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xl font-bold text-blue-900">18°C</span>
+                                <span class="block text-[10px] uppercase font-bold text-green-600 tracking-wider">Clear & Playable</span>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-lg flex justify-between items-center">
+                            <div>
+                                <p class="font-semibold text-indigo-900 text-sm">Brampton Grounds</p>
+                                <p class="text-xs text-indigo-700 mt-0.5">CAA Centre Complex Status</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xl font-bold text-indigo-900">17°C</span>
+                                <span class="block text-[10px] uppercase font-bold text-green-600 tracking-wider">Clear & Playable</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Directories -->
+                    <p class="text-xs font-semibold uppercase text-gray-400 tracking-wider mb-2">Venue Navigation Directories</p>
+                    <div class="space-y-2 text-xs">
+                        <a href="https://www.mississauga.ca/events-and-attractions/parks/dunton-athletic-fields/" target="_blank" class="p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded block transition">
+                            <span class="font-bold text-gray-900 block mb-0.5">Dunton Athletic Fields</span>
+                            <span class="text-gray-500">6180 Kennedy Rd, Mississauga</span>
+                        </a>
+                        <a href="https://www.mississauga.ca/events-and-attractions/parks/brickyard-park/" target="_blank" class="p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded block transition">
+                            <span class="font-bold text-gray-900 block mb-0.5">Brickyard Park</span>
+                            <span class="text-gray-500">3061 Clayhill Rd, Mississauga</span>
+                        </a>
+                        <a href="https://caacentre.com/" target="_blank" class="p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded block transition">
+                            <span class="font-bold text-gray-900 block mb-0.5">CAA Centre Complex</span>
+                            <span class="text-gray-500">7575 Kennedy Rd S, Brampton</span>
+                        </a>
+                    </div>
+                </section>
+            </div>
+
         </div>
 
     </main>
@@ -168,22 +169,19 @@
             { id: 24, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Zeshan", away: "Team Yasir" }
         ];
 
-        // Unique core team database identity map
         const teamsList = [
             "Team Zeshan", "Team Ali", "Team Yasir", "Team Yusuf", "Team Emad", "Team Zohaid"
         ];
 
-        // Object containing runtime configurations tracking input values state persistently
         let scoresState = {};
+        let currentSearchQuery = "";
 
-        // Run application setup initialization mapping elements
         function initApp() {
             loadSavedScores();
             renderSchedule();
             calculateAndRenderStandings();
         }
 
-        // Save data to localStorage to prevent data loss on page refreshes
         function saveScores() {
             localStorage.setItem('league_scores_state', JSON.stringify(scoresState));
         }
@@ -195,20 +193,36 @@
             }
         }
 
-        // Render data loop tracking dates systematically inside schedule card list UI container
+        function filterSchedule(query) {
+            currentSearchQuery = query.toLowerCase().trim();
+            renderSchedule();
+        }
+
         function renderSchedule() {
             const container = document.getElementById("schedule-container");
             container.innerHTML = "";
 
             const groupedByDate = {};
             matches.forEach(match => {
+                // If it passes search query check, process it
+                const matchText = `${match.date} ${match.time} ${match.diamond} ${match.home} ${match.away}`.toLowerCase();
+                if (currentSearchQuery !== "" && !matchText.includes(currentSearchQuery)) {
+                    return; 
+                }
+
                 if (!groupedByDate[match.date]) {
                     groupedByDate[match.date] = [];
                 }
                 groupedByDate[match.date].push(match);
             });
 
-            for (const date in groupedByDate) {
+            const datesFound = Object.keys(groupedByDate);
+            if (datesFound.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-sm text-gray-400">No matching scheduled games found.</div>`;
+                return;
+            }
+
+            datesFound.forEach(date => {
                 const dateHeader = document.createElement("div");
                 dateHeader.className = "bg-gray-50 px-6 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider border-y border-gray-100";
                 dateHeader.innerText = date;
@@ -247,7 +261,7 @@
                     `;
                     container.appendChild(row);
                 });
-            }
+            });
         }
 
         function updateScore(matchId, side, value) {
@@ -334,15 +348,6 @@
                 `;
                 tbody.appendChild(row);
             });
-        }
-
-        function resetAllScores() {
-            if (confirm("Are you sure you want to completely clear all saved match scores and reset the standings table?")) {
-                scoresState = {};
-                saveScores();
-                renderSchedule();
-                calculateAndRenderStandings();
-            }
         }
 
         window.addEventListener("DOMContentLoaded", initApp);
