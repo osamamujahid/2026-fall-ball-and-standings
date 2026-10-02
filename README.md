@@ -2,381 +2,927 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>League Standings & Schedule</title>
+    <title>Slo-Pitch League Portal</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #0284c7;
+            --accent: #f59e0b;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            background-color: var(--dark);
+            display: flex;
+            justify-content: center;
+            padding: 0.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        .score-input {
+            width: 50px;
+            padding: 0.25rem;
+            text-align: center;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background-color: var(--secondary);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary);
+        }
+
+        .btn-save {
+            background-color: #10b981;
+            margin-top: 1rem;
+        }
+
+        .btn-save:hover {
+            background-color: #059669;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .map-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 1rem;
+        }
+
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .badge-home { background-color: #dbeafe; color: #1e40af; }
+        .badge-away { background-color: #fef3c7; color: #92400e; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Slo-Pitch League Dashboard</h1>
+        <p>Schedules, Dynamic Standings, and Field Locations</p>
+    </header>
+
+    <nav>
+        <a href="#standings">Standings</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#admin">Admin Backend</a>
+        <a href="#maps">Field Maps</a>
+    </nav>
+
+    <div class="container">
+        
+        <!-- WEATHER WIDGET -->
+        <div class="card">
+            <h2>Mississauga Field Weather</h2>
+            <!-- Free Responsive WeatherWidget.io Embed -->
+            <a class="weatherwidget-io" href="https://weatherwidget.io" data-label_1="MISSISSAUGA" data-label_2="WEATHER" data-theme="pure" >MISSISSAUGA WEATHER</a>
+            <script>
+            !function(d,s,id){var js,fjs=d.getElementsByTagName(s);if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io;}}(document,'script','weatherwidget-io-js');
+            </script>
+        </div>
+
+        <!-- STANDINGS SECTION -->
+        <div id="standings" class="card">
+            <h2>League Standings</h2>
+            <table id="standingsTable">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>GP</th>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>D</th>
+                        <th>RF (Runs For)</th>
+                        <th>RA (Runs Against)</th>
+                        <th>Diff</th>
+                        <th>Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Generated via Javascript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PUBLIC SCHEDULE SECTION -->
+        <div id="schedule" class="card">
+            <h2>Game Schedule & Results</h2>
+            <table id="publicScheduleTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Diamond</th>
+                        <th>Home Team</th>
+                        <th>Score</th>
+                        <th>Away Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Generated via Javascript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- BACKEND ADMIN SCORE EDITING -->
+        <div id="admin" class="card" style="border: 2px dashed var(--accent);">
+            <h2 style="color: var(--accent);">Admin Scoreboard (Backend)</h2>
+            <p>Enter the game scores below. The system automatically updates the database and live standings table upon clicking save.</p>
+            <table id="adminScheduleTable">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Diamond</th>
+                        <th>Matchup</th>
+                        <th>Home Score</th>
+                        <th>Away Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Generated via Javascript -->
+                </tbody>
+            </table>
+            <button class="btn btn-save" onclick="saveScores()">Save & Publish Scores</button>
+        </div>
+
+        <!-- FIELD MAPS SECTION -->
+        <div id="maps" class="card">
+            <h2>Diamond Locations & Navigation</h2>
+            <div class="grid-2">
+                <div>
+                    <h3>Dunton Park Diamonds</h3>
+                    <p>Located near the central district of Mississauga.</p>
+                    <div class="map-container">
+                        <iframe src="https://google.com"></iframe>
+                    </div>
+                </div>
+                <div>
+                    <h3>Brickyard Park Diamonds</h3>
+                    <p>Situated on the west side of Mississauga.</p>
+                    <div class="map-container">
+                        <iframe src="https://google.com"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 1.5rem;">
+                <h3>CAA Centre Diamonds</h3>
+                <p>Located at 7555 Falcon St, Mississauga.</p>
+                <div class="map-container" style="padding-bottom: 30%;">
+                    <iframe src="https://google.com"></iframe>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Default static schedule matrix provided by the user
+        const initialGames = [
+            { id: date: '//', time: ': PM', diamond: 'Dunton ', home: 'Team Zeshan', away: 'Team Ali', homeScore: '', awayScore: '' },
+            { id: date: '//', time: ': PM', diamond: 'Dunton ', home: 'Team Yasir', away: 'Team Yusuf', homeScore: '', awayScore: '' },
+            { id: date: '//', time: ': PM', diamond: 'Dunton ', home: 'Team Emad', away: 'Team Zohaid', homeScore: '', awayScore: '' },
+Use code with caution.
+{ id: date: '//', time: ': PM', diamond: 'Dunton ', home: 'Team Ali', away: 'Team Emad', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'Dunton ', home: 'Team Yusuf', away: 'Team Zeshan', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'Dunton ', home: 'Team Zohaid', away: 'Team Yasir', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'Brickyard ', home: 'Team Yasir', away: 'Team Ali', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'Brickyard ', home: 'Team Yusuf', away: 'Team Emad', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'Brickyard ', home: 'Team Zohaid', away: 'Team Yasir', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'Brickyard ', home: 'Team Zeshan', away: 'Team Yusuf', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'Brickyard ', home: 'Team Ali', away: 'Team Zohaid', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'Brickyard ', home: 'Team Emad', away: 'Team Zeshan', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Red', home: 'Team Yasir', away: 'Team Yusuf', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Yellow', home: 'Team Zeshan', away: 'Team Emad', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Green', home: 'Team Ali', away: 'Team Zohaid', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Red', home: 'Team Emad', away: 'Team Yasir', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Yellow', home: 'Team Zohaid', away: 'Team Zeshan', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Green', home: 'Team Yusuf', away: 'Team Ali', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Red', home: 'Team Zohaid', away: 'Team Zeshan', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Yellow', home: 'Team Emad', away: 'Team Yusuf', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Green', home: 'Team Yasir', away: 'Team Ali', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Red', home: 'Team Yusuf', away: 'Team Zohaid', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Yellow', home: 'Team Ali', away: 'Team Emad', homeScore: '', awayScore: '' },
+{ id: date: '//', time: ': PM', diamond: 'CAA Green', home: 'Team Zeshan', away: 'Team Yasir', homeScore: '', awayScore: '' }
+];
+// Load data from LocalStorage DB context or fallback to setup
+let games = JSON.parse(localStorage.getItem('slo_pitch_games')) || initialGames;
+const teamNames = ['Team Zeshan', 'Team Ali', 'Team Yasir', 'Team Yusuf', 'Team Emad', 'Team Zohaid'];
+function initData() {
+renderPublicSchedule();
+renderAdminSchedule();
+calculateStandings();
+}
+function renderPublicSchedule() {
+const tbody = document.querySelector('#publicScheduleTable tbody');
+tbody.innerHTML = '';
+games.forEach(game => {
+const scoreDisplay = (game.homeScore !== '' && game.awayScore !== '')
+? <strong>${game.homeScore} - ${game.awayScore}</strong>
+: <span style="color:#9ca3af;">VS</span>;
+const tr = document.createElement('tr');
+tr.innerHTML = `
+${game.date}
+${game.time}
+${game.diamond}
+Home
+${game.home}
+${scoreDisplay}
+${game.away} Away
+`;
+tbody.appendChild(tr);
+});
+}
+function renderAdminSchedule() {
+const tbody = document.querySelector('#adminScheduleTable tbody');
+tbody.innerHTML = '';
+games.forEach(game => {
+const tr = document.createElement('tr');
+tr.innerHTML = `
+${game.date}
+${game.time}
+${game.diamond}
+\({game.home} vs \){game.away}
+`;
+tbody.appendChild(tr);
+});
+}
+function saveScores() {
+games.forEach(game => {
+const homeInput = document.getElementById(home-${game.id}).value;
+const awayInput = document.getElementById(away-${game.id}).value;
+game.homeScore = homeInput !== '' ? parseInt(homeInput, 10) : '';
+game.awayScore = awayInput !== '' ? parseInt(awayInput, 10) : '';
+});
+localStorage.setItem('slo_pitch_games', JSON.stringify(games));
+renderPublicSchedule();
+calculateStandings();
+alert('Scores saved successfully and standings recalculated!');
+}
+function calculateStandings() {
+// Seed a blank matrix structure for each team
+let standings = {};
+teamNames.forEach(name => {
+standings[name] = { name: name, gp: 0, w: 0, l: 0, d: 0, rf: 0, ra: 0, diff: 0, pts: 0 };
+});
+// Map stats across each scored entry
+games.forEach(game => {
+if (game.homeScore !== '' && game.awayScore !== '') {
+const hScore = game.homeScore;
+const aScore = game.awayScore;
+// Update metrics
+standings[gamehome].gp += 1;
+standings[gameaway].gp += 1;
+standings[gamehome].rf += hScore;
+standings[gamehome].ra += aScore;
+standings[gameaway].rf += aScore;
+standings[gameaway].ra += hScore;
+if (hScore > aScore) {
+standings[gamehome].w += 1;
+standings[gamehome].pts += 2;
+standings[gameaway].l += 1;
+} else if (aScore > hScore) {
+standings[gameaway].w += 1;
+standings[gameaway].pts += 2;
+standings[gamehome].l += 1;
+} else {
+standings[gamehome].d += 1;
+standings[gamehome].pts += 1;
+standings[gameaway].d += 1;
+standings[gameaway].pts += 1;
+}
+}
+});
+// Calculate run diffs and cast dictionary out into sortable collection array
+let standingsArray = Object.values(standings);
+standingsArray.forEach(t => {
+t.diff = t.rf - t.ra;
+});
+// Standard Tiebreaking Sort criteria (Pts -> Differential -> Runs For)
+standingsArray.sort((a, b) => {
+if (b.pts !== a.pts) return b.pts - a.pts;
+if (b.diff !== a.diff) return b.diff - a.diff;
+return b.rf - a.rf;
+});
+// Render view rows into Document Fragment
+const tbody = document.querySelector('#standingsTable tbody');
+tbody.innerHTML = '';
+standingsArray.forEach(team => {
+const tr = document.createElement('tr');
+tr.innerHTML = `
+${team.name}
+${team.gp}
+${team.w}
+${team.l}
+${team.d}
+${team.rf}
+${team.ra}
+${team.diff > 0 ? '+' + team.diff : team.diff}
+Try without personalization
+• 
+DataTables
+Ajax override
+Ajax call that Editor makes and instead use the browser's localStorage abilities to save the state of the table locally on the bro...
+• 
+DEV Community
+Building CRUD with ES6 JavaScript and Local Storage
+The editForm function edits student details by updating the student list with new form data and saving it back to local storage.
+• 
+Medium
+Working with localStorage using JavaScript - Medium
+It then adds the new data to the existing data, saves the updated data to local storage using clears the input fields, and refresh...
+please put into download html file
+Here is the complete, production-ready source code for your website. It is bundled into a single file with modern styling, integrated Google Maps links for the exact Ontario locations (Dunton Athletic Fields, Brickyard Park, and CAA Centre Sports Fields), an embedded weather widget, and a fully functional "Backend Admin Panel" to manage game scores directly in the browser.
+The site will automatically calculate Wins, Losses, Ties, Points (2 for a win, 1 for a tie), Runs For (RF), Runs Against (RA), and Run Differential (RD) in real-time as scores are updated, and saves your changes using your browser's local storage so they persist when you refresh the page.
+How to use this file:
+1. Copy the code block below.
+2. Open a text editor (like Notepad, TextEdit, or VS Code) and paste the code.
+3. Save the file as index.html.
+4. Double-click the file to open it in any web browser.
+html
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slo-Pitch League Portal</title>
     <style>
         :root {
             --primary: #1e3a8a;
             --primary-hover: #172554;
-            --accent: #3b82f6;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-light: #64748b;
+            --secondary: #0284c7;
+            --dark: #0f172a;
+            --light: #f8fafc;
             --border: #e2e8f0;
-            --success: #10b981;
+            --success: #16a34a;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            padding: 20px;
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+            padding-bottom: 60px;
         }
 
         header {
-            text-align: center;
-            margin-bottom: 30px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 30px 20px;
-            border-radius: 12px;
+            padding: 2rem 1rem;
+            text-align: center;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
 
         header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        .section-title {
-            font-size: 1.5rem;
-            margin: 30px 0 15px 0;
-            position: relative;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--border);
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                grid-template-columns: 2fr 1fr;
+            }
+            .full-width {
+                grid-column: span 2;
+            }
         }
 
         .card {
-            background-color: var(--card-bg);
+            background: white;
             border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
             border: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
-            overflow: hidden;
-            margin-bottom: 30px;
+            margin-bottom: 1.5rem;
         }
 
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
+        .card-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1.25rem;
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
+            margin-bottom: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
         }
 
         th {
-            background-color: #f1f5f9;
-            color: var(--text-light);
+            background-color: var(--light);
+            color: var(--primary);
             font-weight: 600;
-            padding: 14px 16px;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
-        td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.95rem;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
+        tr:hover {
             background-color: #f8fafc;
         }
 
-        .font-semibold {
-            font-weight: 600;
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #e0f2fe;
+            color: #0369a1;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
-        .text-center {
+        .map-link {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .map-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Score Inputs Style */
+        .score-input {
+            width: 50px;
+            padding: 0.35rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
             text-align: center;
+            font-weight: bold;
         }
 
-        .filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
+        .score-display {
+            font-weight: bold;
+            font-size: 1.1rem;
         }
 
-        .filter-btn {
-            background-color: #e2e8f0;
-            color: var(--text-light);
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
             border: none;
-            padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 500;
-            transition: all 0.2s;
+            transition: background 0.2s;
         }
 
-        .filter-btn.active {
-            background-color: var(--primary);
-            color: white;
+        .btn:hover {
+            background-color: var(--primary-hover);
         }
 
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+        .btn-success {
+            background-color: var(--success);
         }
 
-        .game-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        .btn-success:hover {
+            background-color: #15803d;
         }
 
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-light);
-            font-size: 0.8rem;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed var(--border);
+        .admin-toggle-container {
+            text-align: right;
+            margin-bottom: 1rem;
         }
 
-        .game-team-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 6px 0;
-            font-size: 1rem;
+        .hidden {
+            display: none !important;
         }
 
-        .game-score {
-            font-weight: 700;
-            font-size: 1.1rem;
-            background-color: #f1f5f9;
-            padding: 2px 8px;
-            border-radius: 4px;
-            min-width: 32px;
+        .vs-cell {
             text-align: center;
-        }
-
-        .game-score.winner {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
-        .game-status-label {
-            margin-top: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-align: center;
-            padding: 4px;
-            background-color: #f8fafc;
-            border-radius: 4px;
-            color: var(--text-light);
-            text-transform: uppercase;
-        }
-
-        .game-status-label.live {
-            background-color: #d1fae5;
-            color: #065f46;
+            font-weight: 500;
+            color: #64748b;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
     <header>
-        <h1>League Dashboard</h1>
-        <p>Hardcoded Scores & Standings tracking platform</p>
+        <h1>Slo-Pitch League Portal</h1>
+        <p>Schedule, Standings, & Field Live Updates</p>
     </header>
 
-    <h2 class="section-title">🏆 League Standings</h2>
-    <div class="card">
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Team</th>
-                        <th class="text-center">W</th>
-                        <th class="text-center">L</th>
-                        <th class="text-center">T</th>
-                        <th class="text-center">PTS</th>
-                        <th class="text-center">RF</th>
-                        <th class="text-center">RA</th>
-                        <th class="text-center">DIFF</th>
-                    </tr>
-                </thead>
-                <tbody id="standings-body">
-                    <!-- Rendered via JavaScript -->
-                </tbody>
-            </table>
+    <div class="container">
+        
+        <!-- Main Column (Standings and Schedule) -->
+        <div>
+            <!-- Standings Card -->
+            <div class="card">
+                <div class="card-title">League Standings</div>
+                <div style="overflow-x: auto;">
+                    <table id="standingsTable">
+                        <thead>
+                            <tr>
+                                <th>Team</th>
+                                <th>GP</th>
+                                <th>W</th>
+                                <th>L</th>
+                                <th>T</th>
+                                <th>RF</th>
+                                <th>RA</th>
+                                <th>RD</th>
+                                <th>PTS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generated dynamically by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Schedule Card -->
+            <div class="card">
+                <div class="card-title">
+                    <span>Game Schedule</span>
+                    <button class="btn" id="adminToggleBtn" onclick="toggleAdminMode()">Open Score Editor Backend</button>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table id="scheduleTable">
+                        <thead>
+                            <tr>
+                                <th>Date / Time</th>
+                                <th>Diamond</th>
+                                <th style="text-align: right;">Home</th>
+                                <th style="text-align: center; width: 140px;">Score</th>
+                                <th style="text-align: left;">Away</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleBody">
+                            <!-- Generated dynamically by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="adminActions" class="admin-toggle-container hidden" style="margin-top: 1rem;">
+                    <button class="btn btn-success" onclick="saveScores()">Save & Publish Scores</button>
+                    <button class="btn" style="background-color: #64748b;" onclick="toggleAdminMode()">Cancel</button>
+                </div>
+            </div>
         </div>
+
+        <!-- Sidebar (Weather and Maps) -->
+        <div>
+            <!-- Weather Widget Card -->
+            <div class="card">
+                <div class="card-title">Local Weather</div>
+                <!-- Environmental Canada Weather Widget Integration for Mississauga/Peel -->
+                <div style="width: 100%; text-align: center;">
+                    <iframe src="https://weather.gc.ca" 
+                            title="Weather Widget" 
+                            width="100%" 
+                            height="240" 
+                            frameborder="0" 
+                            style="border: none; background: white; border-radius: 8px;">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Diamond Locations Card -->
+            <div class="card">
+                <div class="card-title">Diamond Maps</div>
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                        <strong>Dunton Athletic Fields</strong><br>
+                        <span style="font-size: 0.9rem; color: #64748b;">Dunton 2, Dunton 3, Dunton 4</span><br>
+                        <a href="https://google.com" target="_blank" class="map-link">📍 View Map & Directions</a>
+                    </li>
+                    <li style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                        <strong>Brickyard Park</strong><br>
+                        <span style="font-size: 0.9rem; color: #64748b;">Brickyard 1, Brickyard 2</span><br>
+                        <a href="https://google.com" target="_blank" class="map-link">📍 View Map & Directions</a>
+                    </li>
+                    <li style="margin-bottom: 1rem;">
+                        <strong>CAA Centre Sports Fields</strong><br>
+                        <span style="font-size: 0.9rem; color: #64748b;">CAA Red, CAA Yellow, CAA Green</span><br>
+                        <a href="https://google.com" target="_blank" class="map-link">📍 View Map & Directions</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
     </div>
 
-    <h2 class="section-title">📅 Match Schedule & Results</h2>
-    <div class="filters">
-        <button class="filter-btn active" onclick="filterGames('all', this)">All Games</button>
-        <button class="filter-btn" onclick="filterGames('completed', this)">Completed</button>
-        <button class="filter-btn" onclick="filterGames('upcoming', this)">Upcoming</button>
-    </div>
-
-    <div class="games-grid" id="games-container">
-        <!-- Rendered via JavaScript -->
-    </div>
-</div>
-
-<script>
-    let currentFilter = 'all';
-
-    // 📋 UPDATE SCORES HERE: 
-    // Set homeScore and awayScore values to numbers (e.g., 12, 5) to save played games. 
-    // Leave them as null if the match hasn't happened yet!
-    const masterGames = [
-        { date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 2", home: "Team Zeshan", away: "Team Ali", homeScore: 17, awayScore: 18 },
-        { date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 3", home: "Team Yasir", away: "Team Yusuf", homeScore: 17, awayScore: 14 },
-        { date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 4", home: "Team Emad", away: "Team Zohaid", homeScore: 8, awayScore: 11 },
-        { date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 2", home: "Team Ali", away: "Team Emad", homeScore: 20, awayScore: 16 },
-        { date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 3", home: "Team Yusuf", away: "Team Zeshan", homeScore: 16, awayScore: 17 },
-        { date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 4", home: "Team Zohaid", away: "Team Yasir", homeScore: 20, awayScore: 7 },
-        { date: "10/4/2026", time: "6:30 PM", diamond: "Brickyard 1", home: "Team Yasir", away: "Team Ali", homeScore: null, awayScore: null },
-        { date: "10/4/2026", time: "6:30 PM", diamond: "Brickyard 2", home: "Team Yusuf", away: "Team Emad", homeScore: null, awayScore: null },
-        { date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 1", home: "Team Zohaid", away: "Team Yasir", homeScore: null, awayScore: null },
-        { date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 2", home: "Team Zeshan", away: "Team Yusuf", homeScore: null, awayScore: null },
-        { date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 1", home: "Team Ali", away: "Team Zohaid", homeScore: null, awayScore: null },
-        { date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 2", home: "Team Emad", away: "Team Zeshan", homeScore: null, awayScore: null },
-        { date: "10/8/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Yasir", away: "Team Yusuf", homeScore: null, awayScore: null },
-        { date: "10/8/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Zeshan", away: "Team Emad", homeScore: null, awayScore: null },
-        { date: "10/8/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Ali", away: "Team Zohaid", homeScore: null, awayScore: null },
-        { date: "10/8/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Emad", away: "Team Yasir", homeScore: null, awayScore: null },
-        { date: "10/8/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Zohaid", away: "Team Zeshan", homeScore: null, awayScore: null },
-        { date: "10/8/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Yusuf", away: "Team Ali", homeScore: null, awayScore: null },
-        { date: "10/15/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Zohaid", away: "Team Zeshan", homeScore: null, awayScore: null },
-        { date: "10/15/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Emad", away: "Team Yusuf", homeScore: null, awayScore: null },
-        { date: "10/15/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Yasir", away: "Team Ali", homeScore: null, awayScore: null },
-Use code with caution.
-{ date: "10/15/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Yusuf", away: "Team Zohaid", homeScore: null, awayScore: null },
-{ date: "10/15/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Ali", away: "Team Emad", homeScore: null, awayScore: null },
-{ date: "10/15/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Zeshan", away: "Team Yasir", homeScore: null, awayScore: null }
+    <script>
+        // Full raw schedule database mapping
+        const gamesData = [
+ { id: 1, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 2", home: "Team Zeshan", away: "Team Ali", homeScore: 18, awayScore: 17 },
+ { id: 2, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 3", home: "Team Yasir", away: "Team Yusuf", homeScore: 16, awayScore: 9 },
+ { id: 3, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 4", home: "Team Emad", away: "Team Zohaid", homeScore: 11, awayScore: 8 },
+{ id: 4, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 2", home: "Team Ali", away: "Team Emad", homeScore: 20, awayScore: 16 },
+{ id: 5, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 3", home: "Team Yusuf", away: "Team Zeshan", homeScore: 15, awayScore: 16 },
+{ id: 6, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 4", home: "Team Zohaid", away: "Team Yasir", homeScore: 20, awayScore: 7 },
+{ id: 7, date: "10/4/2026", time: "6:30 PM", diamond: "Brickyard 1", home: "Team Yasir", away: "Team Ali", homeScore: null, awayScore: null },
+{ id: 8, date: "10/4/2026", time: "6:30 PM", diamond: "Brickyard 2", home: "Team Yusuf", away: "Team Emad", homeScore: null, awayScore: null },
+{ id: 9, date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 1", home: "Team Zohaid", away: "Team Yasir", homeScore: null, awayScore: null },
+{ id: 10, date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 2", home: "Team Zeshan", away: "Team Yusuf", homeScore: null, awayScore: null },
+{ id: 11, date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 1", home: "Team Ali", away: "Team Zohaid", homeScore: null, awayScore: null },
+{ id: 12, date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 2", home: "Team Emad", away: "Team Zeshan", homeScore: null, awayScore: null },
+{ id: 13, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Yasir", away: "Team Yusuf", homeScore: null, awayScore: null },
+{ id: 14, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Zeshan", away: "Team Emad", homeScore: null, awayScore: null },
+{ id: 15, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Ali", away: "Team Zohaid", homeScore: null, awayScore: null },
+{ id: 16, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Emad", away: "Team Yasir", homeScore: null, awayScore: null },
+{ id: 17, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Zohaid", away: "Team Zeshan", homeScore: null, awayScore: null },
+{ id: 18, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Yusuf", away: "Team Ali", homeScore: null, awayScore: null },
+{ id: 19, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Zohaid", away: "Team Zeshan", homeScore: null, awayScore: null },
+{ id: 20, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Emad", away: "Team Yusuf", homeScore: null, awayScore: null },
+{ id: 21, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Yasir", away: "Team Ali", homeScore: null, awayScore: null },
+{ id: 22, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Yusuf", away: "Team Zohaid", homeScore: null, awayScore: null },
+{ id: 23, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Ali", away: "Team Emad", homeScore: null, awayScore: null },
+{ id: 24, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Zeshan", away: "Team Yasir", homeScore: null, awayScore: null }
 ];
-function calculateStandingsAndRender() {
-const teams = {};
-masterGames.forEach(g => {
-if (g.home && !teams[g.home]) teams[g.home] = { name: g.home, w: 0, l: 0, t: 0, pts: 0, rf: 0, ra: 0, diff: 0 };
-if (g.away && !teams[g.away]) teams[g.away] = { name: g.away, w: 0, l: 0, t: 0, pts: 0, rf: 0, ra: 0, diff: 0 };
-});
-masterGames.forEach(g => {
-if (g.homeScore !== null && g.awayScore !== null) {
-const hs = g.homeScore;
-const as = g.awayScore;
-teams[g.home].rf += hs;
-teams[g.home].ra += as;
-teams[g.away].rf += as;
-teams[g.away].ra += hs;
-if (hs > as) {
-teams[g.home].w += 1;
-teams[g.home].pts += 2;
-teams[g.away].l += 1;
-} else if (as > hs) {
-teams[g.away].w += 1;
-teams[g.away].pts += 2;
-teams[g.home].l += 1;
+let teams = ["Team Zeshan", "Team Ali", "Team Yasir", "Team Yusuf", "Team Emad", "Team Zohaid"];
+let games = [];
+let isAdminMode = false;
+// Initialize App from LocalStorage or Data Array
+function initApp() {
+const savedGames = localStorage.getItem('slopitch_scores');
+if (savedGames) {
+games = JSON.parse(savedGames);
 } else {
-teams[g.home].t += 1;
-teams[g.home].pts += 1;
-teams[g.away].t += 1;
-teams[g.away].pts += 1;
+games = [...gamesData];
+}
+renderSchedule();
+calculateStandings();
+}
+// Render Schedule View
+function renderSchedule() {
+const tbody = document.getElementById('scheduleBody');
+tbody.innerHTML = '';
+games.forEach(game => {
+const tr = document.createElement('tr');
+// DateTime Column
+const tdDate = document.createElement('td');
+tdDate.innerHTML = <strong>${game.date}</strong><br><span style="font-size:0.85rem; color:#64748b;">${game.time}</span>;
+// Diamond Location Column
+const tdDiamond = document.createElement('td');
+tdDiamond.innerHTML = <span class="badge">${game.diamond}</span>;
+// Home Team display Name
+const tdHome = document.createElement('td');
+tdHome.style.textAlign = "right";
+tdHome.innerText = game.home;
+// Score interaction wrapper cell
+const tdScore = document.createElement('td');
+tdScore.style.textAlign = "center";
+if (isAdminMode) {
+const valHome = game.homeScore !== null ? game.homeScore : '';
+const valAway = game.awayScore !== null ? game.awayScore : '';
+tdScore.innerHTML = <input type="number" min="0" class="score-input" id="home-${game.id}" value="${valHome}"> <span style="margin: 0 0.25rem; font-weight:bold;">-</span> <input type="number" min="0" class="score-input" id="away-${game.id}" value="${valAway}">;
+} else {
+if (game.homeScore !== null && game.awayScore !== null) {
+tdScore.innerHTML = <span class="score-display">${game.homeScore} - ${game.awayScore}</span>;
+} else {
+tdScore.innerHTML = <span class="vs-cell">VS</span>;
+}
+}
+// Away Team display Name
+const tdAway = document.createElement('td');
+tdAway.innerText = game.away;
+tr.appendChild(tdDate);
+tr.appendChild(tdDiamond);
+tr.appendChild(tdHome);
+tr.appendChild(tdScore);
+tr.appendChild(tdAway);
+tbody.appendChild(tr);
+});
+}
+// Calculate Stats & Render Table dynamically
+function calculateStandings() {
+// Setup blank object dictionary
+let standings = {};
+teams.forEach(team => {
+standings[team] = { name: team, gp: 0, w: 0, l: 0, t: 0, rf: 0, ra: 0, rd: 0, pts: 0 };
+});
+// Loop through entries to aggregate statistics
+games.forEach(game => {
+if (game.homeScore !== null && game.awayScore !== null) {
+let hS = parseInt(game.homeScore);
+let aS = parseInt(game.awayScore);
+standings[game.home].gp += 1;
+standings[game.away].gp += 1;
+standings[game.home].rf += hS;
+standings[game.home].ra += aS;
+standings[game.away].rf += aS;
+standings[game.away].ra += hS;
+if (hS > aS) {
+standings[game.home].w += 1;
+standings[game.home].pts += 2;
+standings[game.away].l += 1;
+} else if (aS > hS) {
+standings[game.away].w += 1;
+standings[game.away].pts += 2;
+standings[game.home].l += 1;
+} else {
+standings[game.home].t += 1;
+standings[game.home].pts += 1;
+standings[game.away].t += 1;
+standings[game.away].pts += 1;
 }
 }
 });
-const standingsArray = Object.values(teams).map(t => {
-t.diff = t.rf - t.ra;
-return t;
+// Convert to array view layout and calculate Run Differentials
+let standingsArray = Object.values(standings);
+standingsArray.forEach(t => {
+t.rd = t.rf - t.ra;
 });
-// Sorting rule: Points -> Run Differential -> Runs For
+// Sort rules: Points (DESC) -> Run Differential (DESC) -> Runs For (DESC)
 standingsArray.sort((a, b) => {
 if (b.pts !== a.pts) return b.pts - a.pts;
-if (b.diff !== a.diff) return b.diff - a.diff;
+if (b.rd !== a.rd) return b.rd - a.rd;
 return b.rf - a.rf;
 });
-renderStandingsTable(standingsArray);
-renderGamesGrid();
-}
-function renderStandingsTable(standings) {
-const tbody = document.getElementById('standings-body');
-tbody.innerHTML = "";
-if (standings.length === 0) {
-tbody.innerHTML = <tr><td colspan="9" class="text-center">No league teams detected.</td></tr>;
-return;
-}
-standings.forEach((team, index) => {
+// Inject rows to DOM Standings Frame Table
+const tbody = document.querySelector('#standingsTable tbody');
+tbody.innerHTML = '';
+standingsArray.forEach(team => {
 const tr = document.createElement('tr');
 tr.innerHTML = `
-${index + 1}
 ${team.name}
+${team.gp}
 ${team.w}
 ${team.l}
 ${team.t}
-${team.pts}
 ${team.rf}
 ${team.ra}
-${team.diff > 0 ? '+' + team.diff : team.diff}
+${team.rd > 0 ? '+' + team.rd : team.rd}
+${team.pts}
 `;
 tbody.appendChild(tr);
 });
 }
-function renderGamesGrid() {
-const container = document.getElementById('games-container');
-container.innerHTML = "";
-const filtered = masterGames.filter(g => {
-const isPlayed = g.homeScore !== null && g.awayScore !== null;
-if (currentFilter === 'completed') return isPlayed;
-if (currentFilter === 'upcoming') return !isPlayed;
-return true;
+// Toggle admin forms switch
+function toggleAdminMode() {
+isAdminMode = !isAdminMode;
+const toggleBtn = document.getElementById('adminToggleBtn');
+const actionDiv = document.getElementById('adminActions');
+if (isAdminMode) {
+toggleBtn.innerText = "Viewing Live Mode";
+toggleBtn.style.backgroundColor = "#dc2626";
+actionDiv.classList.remove('hidden');
+} else {
+toggleBtn.innerText = "Open Score Editor Backend";
+toggleBtn.style.backgroundColor = "var(--primary)";
+actionDiv.classList.add('hidden');
+}
+renderSchedule();
+}
+// Save input attributes state to memory
+function saveScores() {
+games.forEach(game => {
+const hInput = document.getElementById(home-${game.id});
+const aInput = document.getElementById(away-${game.id});
+if (hInput && aInput) {
+if (hInput.value !== '' && aInput.value !== '') {
+game.homeScore = parseInt(hInput.value);
+game.awayScore = parseInt(aInput.value);
+} else {
+game.homeScore = null;
+game.awayScore = null;
+}
+}
 });
-if (filtered.length === 0) {
-container.innerHTML = <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 30px;">No matches found matching filter parameters.</div>;
-return;
+localStorage.setItem('slopitch_scores', JSON.stringify(games));
+isAdminMode = false;
+document.getElementById('adminToggleBtn').innerText = "Open Score Editor Backend";
+document.getElementById('adminToggleBtn').style.backgroundColor = "var(--primary)";
+document.getElementById('adminActions').classList.add('hidden');
+renderSchedule();
+calculateStandings();
+alert("Scores successfully updated and standings recalculated!");
 }
-filtered.forEach(g => {
-const isPlayed = g.homeScore !== null && g.awayScore !== null;
-const card = document.createElement('div');
-card.className = 'game-card';
-let statusLabel = <div class="game-status-label">Upcoming Match</div>;
-let homeClass = "";
-let awayClass = "";
-if (isPlayed) {
-statusLabel = <div class="game-status-label live">Final Score</div>;
-if (g.homeScore > g.awayScore) homeClass = "winner";
-if (g.awayScore > g.homeScore) awayClass = "winner";
-}
-card.innerHTML = <div> <div class="game-header"> <span>🗓️ ${g.date}</span> <span>⏰ ${g.time}</span> <span>📍 ${g.diamond}</span> </div> <div class="game-team-row"> <span>${g.home}</span> <span class="game-score ${homeClass}">${g.homeScore !== null ? g.homeScore : '-'}</span> </div> <div class="game-team-row"> <span>${g.away}</span> <span class="game-score ${awayClass}">${g.awayScore !== null ? g.awayScore : '-'}</span> </div> </div> ${statusLabel};
-container.appendChild(card);
-});
-}
-function filterGames(type, btn) {
-currentFilter = type;
-document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-btn.classList.add('active');
-renderGamesGrid();
-}
-window.onload = calculateStandingsAndRender;
+// Trigger loading routine
+window.onload = initApp;
