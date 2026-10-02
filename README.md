@@ -4,334 +4,483 @@ html
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>League Portal & Live Standings</title>
-    <!-- Tailwind CSS Engine for visual framework layout styling -->
-    <script src="https://jsdelivr.net"></script>
+    <title>League Standings & Schedule</title>
     <style>
-        .score-input::-webkit-outer-spin-button,
-        .score-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        :root {
+            --primary: #1e3a8a;
+            --primary-hover: #172554;
+            --accent: #3b82f6;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
         }
-        .score-input {
-            -moz-appearance: textfield;
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .sync-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background-color: white;
+            color: var(--primary);
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+        }
+
+        .btn:hover {
+            background-color: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .status-badge {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin: 30px 0 15px 0;
+            position: relative;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--text-light);
+            font-weight: 600;
+            padding: 14px 16px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: #e2e8f0;
+            color: var(--text-light);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .game-team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 6px 0;
+            font-size: 1rem;
+        }
+
+        .game-score {
+            font-weight: 700;
+            font-size: 1.1rem;
+            background-color: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .game-score.winner {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .game-status-label {
+            margin-top: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 4px;
+            background-color: #f8fafc;
+            border-radius: 4px;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+
+        .game-status-label.live {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        #error-message {
+            background-color: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
         }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 font-sans antialiased">
+<body>
 
-    <!-- Header Section -->
-    <header class="bg-zinc-900 border-b-4 border-red-700 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-3xl font-extrabold tracking-tight text-white uppercase"><span class="text-red-600">League</span> Hub</h1>
-                <p class="text-zinc-400 text-sm mt-1">Schedules & Live Standings</p>
-            </div>
-            <div class="flex items-center gap-2 bg-zinc-950 px-3 py-1.5 rounded-lg border border-zinc-800 text-xs">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
-                </span>
-                <span id="sync-status" class="text-zinc-400 font-mono">Syncing...</span>
-            </div>
+<div class="container">
+    <header>
+        <h1>League Dashboard</h1>
+        <p>Live Scores & Standings tracking platform</p>
+        <div class="sync-panel">
+            <button class="btn" onclick="fetchLeagueData()">Sync Live Data</button>
+            <div class="status-badge" id="sync-status">Status: Initializing...</div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
-        
-        <!-- TOP SECTION: Standings Table Leaderboard -->
-        <section class="bg-zinc-900 rounded-xl shadow-lg border border-zinc-800 overflow-hidden">
-            <div class="px-6 py-4 bg-zinc-900 border-b border-zinc-800">
-                <h2 class="text-xl font-bold text-white uppercase tracking-wide">Live Standings Leaderboard</h2>
-                <p class="text-xs text-zinc-400 mt-0.5">Win: 2 PTS | Tie: 1 PT | Loss: 0 PTS</p>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-zinc-950 text-zinc-400 text-[11px] font-bold uppercase tracking-wider border-b border-zinc-800 text-center">
-                            <th class="py-3 px-3 text-left w-12">Pos</th>
-                            <th class="py-3 px-4 text-left">Team</th>
-                            <th class="py-3 px-2">GP</th>
-                            <th class="py-3 px-2">W</th>
-                            <th class="py-3 px-2">T</th>
-                            <th class="py-3 px-2">L</th>
-                            <th class="py-3 px-2">RS</th>
-                            <th class="py-3 px-2">RA</th>
-                            <th class="py-3 px-2">Diff</th>
-                            <th class="py-3 px-4 text-red-500 bg-black/40">PTS</th>
-                        </tr>
-                    </thead>
-                    <tbody id="standings-rows" class="divide-y divide-zinc-800 text-sm text-center">
-                        <tr>
-                            <td colspan="10" class="py-8 text-zinc-500 italic">Calculating team metrics...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="p-4 bg-zinc-950/60 border-t border-zinc-800 text-xs text-zinc-500 text-center">
-                Tie-breaker logic ranks higher Run Differential (Diff) if points match.
-            </div>
-        </section>
+    <div id="error-message"></div>
 
-        <!-- MIDDLE SECTION: Weather & Venue Directories -->
-        <section class="bg-zinc-900 p-6 rounded-xl shadow-lg border border-zinc-800">
-            <h2 class="text-xl font-bold text-white uppercase tracking-wide mb-4 flex items-center gap-2">
-                ☀️ Field Venues & Weather Outlook
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-lg flex justify-between items-center">
-                    <div>
-                        <p class="font-semibold text-zinc-200 text-sm">Mississauga Grounds</p>
-                        <p class="text-xs text-zinc-400 mt-0.5">Dunton & Brickyard Status</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-xl font-bold text-white">18°C</span>
-                        <span class="block text-[10px] uppercase font-bold text-red-500 tracking-wider">Clear & Playable</span>
-                    </div>
-                </div>
-                <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-lg flex justify-between items-center">
-                    <div>
-                        <p class="font-semibold text-zinc-200 text-sm">Brampton Grounds</p>
-                        <p class="text-xs text-zinc-400 mt-0.5">CAA Centre Complex Status</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-xl font-bold text-white">17°C</span>
-                        <span class="block text-[10px] uppercase font-bold text-red-500 tracking-wider">Clear & Playable</span>
-                    </div>
-                </div>
-            </div>
+    <h2 class="section-title">🏆 League Standings</h2>
+    <div class="card">
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Team</th>
+                        <th class="text-center">W</th>
+                        <th class="text-center">L</th>
+                        <th class="text-center">T</th>
+                        <th class="text-center">PTS</th>
+                        <th class="text-center">RF</th>
+                        <th class="text-center">RA</th>
+                        <th class="text-center">DIFF</th>
+                    </tr>
+                </thead>
+                <tbody id="standings-body">
+                    <tr>
+                        <td colspan="9" class="text-center" style="color: var(--text-light);">Syncing with Google Sheets table...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-            <p class="text-xs font-semibold uppercase text-zinc-500 tracking-wider mb-2">Field Directions</p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                <a href="https://mississauga.ca" target="_blank" class="p-3 bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 rounded block transition text-center text-zinc-300">
-                    <span class="font-bold text-white block mb-0.5">Dunton Athletic Fields</span>
-                    <span class="text-zinc-500">6180 Kennedy Rd, Mississauga</span>
-                </a>
-                <a href="https://mississauga.ca" target="_blank" class="p-3 bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 rounded block transition text-center text-zinc-300">
-                    <span class="font-bold text-white block mb-0.5">Brickyard Park</span>
-                    <span class="text-zinc-500">3061 Clayhill Rd, Mississauga</span>
-                </a>
-                <a href="https://caacentre.com" target="_blank" class="p-3 bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 rounded block transition text-center text-zinc-300">
-                    <span class="font-bold text-white block mb-0.5">CAA Centre Complex</span>
-                    <span class="text-zinc-500">7575 Kennedy Rd S, Brampton</span>
-                </a>
-            </div>
-        </section>
+    <h2 class="section-title">📅 Match Schedule & Results</h2>
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterGames('all', this)">All Games</button>
+        <button class="filter-btn" onclick="filterGames('completed', this)">Completed</button>
+        <button class="filter-btn" onclick="filterGames('upcoming', this)">Upcoming</button>
+    </div>
 
-        <!-- BOTTOM SECTION: Schedule Calendar with Filtering -->
-        <section class="bg-zinc-900 rounded-xl shadow-lg border border-zinc-800 overflow-hidden">
-            <div class="px-6 py-4 bg-zinc-900 border-b border-zinc-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 class="text-xl font-bold text-white uppercase tracking-wide">League Match Schedule</h2>
-                </div>
-                <!-- Interactive Search Bar Component -->
-                <div class="w-full sm:w-72">
-                    <input type="text" id="schedule-search" oninput="filterSchedule()" placeholder="🔍 Filter by team, diamond, or date..." 
-                        class="w-full bg-zinc-950 text-zinc-100 text-sm border border-zinc-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent">
-                </div>
-            </div>
+    <div class="games-grid" id="games-container">
+        <!-- Rendered via JavaScript -->
+    </div>
+</div>
 
-            <div class="divide-y divide-zinc-800" id="schedule-container">
-                <!-- Match cards populated programmatically -->
-            </div>
-        </section>
+<script>
+    // Converted your pubhtml link to use the background CSV export query automatically
+    const SPREADSHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTuH2caMN-qBJjKs49kJ-nC_JfHsGS2rjZGO87XE14u-2ijLFbEJ05uIwcVfqTkKmuJiqNm_fxFCNqb/pubhtml";
 
-    </main>
+    let masterGames = [];
+    let currentFilter = 'all';
 
-    <script>
-        // Data feed URL reading configuration directly from your spreadsheet integration
-        const GOOGLE_SHEET_CSV_URL = "https://google.com";
-
-        const matches = [
-            { id: 1, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 2", home: "Team Zeshan", away: "Team Ali" },
-            { id: 2, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 3", home: "Team Yasir", away: "Team Yusuf" },
-            { id: 3, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 4", home: "Team Emad", away: "Team Zohaid" },
-            { id: 4, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 2", home: "Team Ali", away: "Team Emad" },
-            { id: 5, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 3", home: "Team Yusuf", away: "Team Zeshan" },
-            { id: 6, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 4", home: "Team Zohaid", away: "Team Yasir" },
-            { id: 7, date: "10/4/2026", time: "6:30 PM", diamond: "Brickyard 1", home: "Team Yasir", away: "Team Ali" },
-            { id: 8, date: "10/4/2026", time: "6:30 PM", diamond: "Brickyard 2", home: "Team Yusuf", away: "Team Emad" },
-            { id: 9, date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 1", home: "Team Zohaid", away: "Team Yasir" },
-            { id: 10, date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 2", home: "Team Zeshan", away: "Team Yusuf" },
-            { id: 11, date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 1", home: "Team Ali", away: "Team Zohaid" },
-            { id: 12, date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 2", home: "Team Emad", away: "Team Zeshan" },
+    const fallbackSchedule = [
+        ["10/1/2026","7:00 PM","Dunton 2","Team Zeshan","Team Ali"],
+        ["10/1/2026","7:00 PM","Dunton 3","Team Yasir","Team Yusuf"],
+        ["10/1/2026","7:00 PM","Dunton 4","Team Emad","Team Zohaid"],
+        ["10/1/2026","8:30 PM","Dunton 2","Team Ali","Team Emad"],
+        ["10/1/2026","8:30 PM","Dunton 3","Team Yusuf","Team Zeshan"],
+        ["10/1/2026","8:30 PM","Dunton 4","Team Zohaid","Team Yasir"],
+        ["10/4/2026","6:30 PM","Brickyard 1","Team Yasir","Team Ali"],
+        ["10/4/2026","6:30 PM","Brickyard 2","Team Yusuf","Team Emad"],
+        ["10/4/2026","8:00 PM","Brickyard 1","Team Zohaid","Team Yasir"],
+        ["10/4/2026","8:00 PM","Brickyard 2","Team Zeshan","Team Yusuf"],
+        ["10/4/2026","9:30 PM","Brickyard 1","Team Ali","Team Zohaid"],
+        ["10/4/2026","9:30 PM","Brickyard 2","Team Emad","Team Zeshan"],
+        ["10/8/2026","7:00 PM","CAA Red","Team Yasir","Team Yusuf"],
+        ["10/8/2026","7:00 PM","CAA Yellow","Team Zeshan","Team Emad"],
+        ["10/8/2026","7:00 PM","CAA Green","Team Ali","Team Zohaid"],
+        ["10/8/2026","8:30 PM","CAA Red","Team Emad","Team Yasir"],
+        ["10/8/2026","8:30 PM","CAA Yellow","Team Zohaid","Team Zeshan"],
+        ["10/8/2026","8:30 PM","CAA Green","Team Yusuf","Team Ali"],
+        ["10/15/2026","7:00 PM","CAA Red","Team Zohaid","Team Zeshan"],
+        ["10/15/2026","7:00 PM","CAA Yellow","Team Emad","Team Yusuf"],
 Use code with caution.
-{ id: 13, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Yasir", away: "Team Yusuf" },
-{ id: 14, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Zeshan", away: "Team Emad" },
-{ id: 15, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Ali", away: "Team Zohaid" },
-{ id: 16, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Emad", away: "Team Yasir" },
-{ id: 17, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Zohaid", away: "Team Zeshan" },
-{ id: 18, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Yusuf", away: "Team Ali" },
-{ id: 19, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Zohaid", away: "Team Zeshan" },
-{ id: 20, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Emad", away: "Team Yusuf" },
-{ id: 21, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Yasir", away: "Team Ali" },
-{ id: 22, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Yusuf", away: "Team Zohaid" },
-{ id: 23, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Ali", away: "Team Emad" },
-{ id: 24, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Zeshan", away: "Team Yasir" }
+["10/15/2026","7:00 PM","CAA Green","Team Yasir","Team Ali"],
+["10/15/2026","8:30 PM","CAA Red","Team Yusuf","Team Zohaid"],
+["10/15/2026","8:30 PM","CAA Yellow","Team Ali","Team Emad"],
+["10/15/2026","8:30 PM","CAA Green","Team Zeshan","Team Yasir"]
 ];
-const teamsList = ["Team Zeshan", "Team Ali", "Team Yasir", "Team Yusuf", "Team Emad", "Team Zohaid"];
-let sheetScores = {};
-async function fetchSpreadsheetData() {
-const statusNode = document.getElementById("sync-status");
+async function fetchLeagueData() {
+const statusElement = document.getElementById('sync-status');
+const errorElement = document.getElementById('error-message');
+statusElement.innerText = "Status: Syncing matrix rows...";
+errorElement.style.display = 'none';
 try {
-const response = await fetch(${GOOGLE_SHEET_CSV_URL}&cachebust=${new Date().getTime()});
-if (!response.ok) throw new Error("Network feed offline");
-const text = await response.text();
-parseCSVData(text);
-statusNode.innerText = Synced: ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})};
-statusNode.className = "text-red-500 font-mono";
-renderSchedule();
-calculateAndRenderStandings();
-} catch (err) {
-console.error("Sync error:", err);
-statusNode.innerText = "Offline Mode";
-statusNode.className = "text-zinc-500 font-mono";
-renderSchedule();
-calculateAndRenderStandings();
+const response = await fetch(SPREADSHEET_CSV_URL);
+if (!response.ok) throw new Error("Spreadsheet response validation error.");
+const textData = await response.text();
+parseCSVData(textData);
+statusElement.innerText = "Status: Live Synced";
+} catch (error) {
+console.error("External sync error, building standalone base layer:", error);
+statusElement.innerText = "Status: Offline Fallback Active";
+errorElement.innerHTML = ⚠️ <strong>Connection Warning:</strong> Could not load dynamic scores directly from the Google Sheet feed. Please check if your sheet is published via <em>File > Share > Publish to web</em>. Showing local template structure below.;
+errorElement.style.display = 'block';
+masterGames = fallbackSchedule.map(row => ({
+date: row[0], time: row[1], diamond: row[2],
+home: row, away: row[4],
+homeScore: null, awayScore: null
+}));
+calculateStandingsAndRender();
 }
 }
 function parseCSVData(csvText) {
 const lines = csvText.split(/\r?\n/);
-if (lines.length < 2) return;
-const headers = lines[0].split(",");
-const idIdx = headers.findIndex(h => h.trim().toLowerCase() === "gameid");
-const homeIdx = headers.findIndex(h => h.trim().toLowerCase() === "homescore");
-const awayIdx = headers.findIndex(h => h.trim().toLowerCase() === "awayscore");
-if (idIdx === -1 || homeIdx === -1 || awayIdx === -1) return;
-const newScores = {};
+const parsedGames = [];
 for (let i = 1; i < lines.length; i++) {
 if (!lines[i].trim()) continue;
-const row = lines[i].split(/,(?=(?:(?:[^"]"){2})[^"]*$)/);
-const gId = parseInt(row[idIdx], 10);
-if (!gId) continue;
-const hScoreStr = row[homeIdx] ? row[homeIdx].trim() : "";
-const aScoreStr = row[awayIdx] ? row[awayIdx].trim() : "";
-if (hScoreStr !== "" && aScoreStr !== "") {
-newScores[${gId}_home] = parseInt(hScoreStr, 10);
-newScores[${gId}_away] = parseInt(aScoreStr, 10);
-}
-}
-sheetScores = newScores;
-}
-function renderSchedule() {
-const container = document.getElementById("schedule-container");
-container.innerHTML = "";
-const groupedByDate = {};
-matches.forEach(match => {
-if (!groupedByDate[match.date]) groupedByDate[match.date] = [];
-groupedByDate[match.date].push(match);
-});
-for (const date in groupedByDate) {
-const dateSection = document.createElement("div");
-dateSection.id = date-group-${date.replace(/\//g, '-')};
-dateSection.className = "date-group bg-zinc-950 px-6 py-2 text-xs font-bold text-zinc-400 uppercase tracking-wider border-y border-zinc-800";
-dateSection.innerText = date;
-container.appendChild(dateSection);
-groupedByDate[date].forEach(match => {
-const hScore = sheetScores[${match.id}_home];
-const aScore = sheetScores[${match.id}_away];
-const displaysHome = hScore !== undefined ? hScore : "-";
-const displaysAway = aScore !== undefined ? aScore : "-";
-const row = document.createElement("div");
-row.className = "match-card p-6 hover:bg-zinc-900/40 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4";
-row.setAttribute("data-search-index", ${match.home} ${match.away} ${match.diamond} ${match.date}.toLowerCase());
-row.innerHTML = <div class="flex-1"> <div class="flex items-center gap-2 text-xs text-zinc-500 font-medium mb-1"> <span>⏰ ${match.time}</span> <span class="text-zinc-700">•</span> <span class="px-2 py-0.5 bg-zinc-950 border border-zinc-800 text-zinc-400 rounded font-semibold text-[11px]">${match.diamond}</span> </div> <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-semibold text-zinc-200 mt-2"> <div class="flex items-center justify-between p-2.5 bg-zinc-950 rounded border border-zinc-800"> <span><span class="text-xs font-normal text-zinc-600 mr-1.5">[H]</span>${match.home}</span> <span class="text-base font-bold font-mono px-3 py-1 bg-zinc-900 border border-zinc-800 rounded shadow-xs min-w-[36px] text-center text-white">${displaysHome}</span> </div> <div class="flex items-center justify-between p-2.5 bg-zinc-950 rounded border border-zinc-800"> <span><span class="text-xs font-normal text-zinc-600 mr-1.5">[A]</span>${match.away}</span> <span class="text-base font-bold font-mono px-3 py-1 bg-zinc-900 border border-zinc-800 rounded shadow-xs min-w-[36px] text-center text-white">${displaysAway}</span> </div> </div> </div>;
-container.appendChild(row);
+const cols = lines[i].split(/,(?=(?:(?:[^"]"){2})[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+if (cols.length >= 5) {
+const homeS = (cols[5] !== undefined && cols[5] !== "") ? parseInt(cols[5], 10) : null;
+const awayS = (cols[6] !== undefined && cols[6] !== "") ? parseInt(cols[6], 10) : null;
+parsedGames.push({
+date: cols[0],
+time: cols[1],
+diamond: cols[2],
+home: cols,
+away: cols[4],
+homeScore: isNaN(homeS) ? null : homeS,
+awayScore: isNaN(awayS) ? null : awayS
 });
 }
-filterSchedule();
 }
-function filterSchedule() {
-const query = document.getElementById("schedule-search").value.toLowerCase().trim();
-const cards = document.querySelectorAll(".match-card");
-cards.forEach(card => {
-const searchHaystack = card.getAttribute("data-search-index");
-if (!query || searchHaystack.includes(query)) {
-card.style.display = "flex";
+if (parsedGames.length > 0) {
+masterGames = parsedGames;
 } else {
-card.style.display = "none";
+throw new Error("No usable rows found.");
 }
+calculateStandingsAndRender();
+}
+function calculateStandingsAndRender() {
+const teams = {};
+masterGames.forEach(g => {
+if (g.home && !teams[g.home]) teams[g.home] = { name: g.home, w: 0, l: 0, t: 0, pts: 0, rf: 0, ra: 0, diff: 0 };
+if (g.away && !teams[g.away]) teams[g.away] = { name: g.away, w: 0, l: 0, t: 0, pts: 0, rf: 0, ra: 0, diff: 0 };
 });
-const groups = document.querySelectorAll(".date-group");
-groups.forEach(group => {
-let next = group.nextElementSibling;
-let hasVisibleMatch = false;
-while (next && next.classList.contains("match-card")) {
-if (next.style.display !== "none") {
-hasVisibleMatch = true;
-break;
-}
-next = next.nextElementSibling;
-}
-group.style.display = hasVisibleMatch ? "block" : "none";
-});
-}
-function calculateAndRenderStandings() {
-const standings = {};
-teamsList.forEach(team => {
-standings[team] = { gp: 0, wins: 0, losses: 0, ties: 0, rf: 0, ra: 0, diff: 0, pts: 0 };
-});
-matches.forEach(match => {
-const hScore = sheetScores[${match.id}_home];
-const aScore = sheetScores[${match.id}_away];
-if (hScore !== undefined && aScore !== undefined) {
-standings[match.home].gp += 1;
-standings[match.away].gp += 1;
-standings[match.home].rf += hScore;
-standings[match.home].ra += aScore;
-standings[match.away].rf += aScore;
-standings[match.away].ra += hScore;
-if (hScore > aScore) {
-standings[match.home].wins += 1;
-standings[match.home].pts += 2;
-standings[match.away].losses += 1;
-} else if (aScore > hScore) {
-standings[match.away].wins += 1;
-standings[match.away].pts += 2;
-standings[match.home].losses += 1;
+masterGames.forEach(g => {
+if (g.homeScore !== null && g.awayScore !== null) {
+const hs = g.homeScore;
+const as = g.awayScore;
+teams[g.home].rf += hs;
+teams[g.home].ra += as;
+teams[g.away].rf += as;
+teams[g.away].ra += hs;
+if (hs > as) {
+teams[g.home].w += 1;
+teams[g.home].pts += 2;
+teams[g.away].l += 1;
+} else if (as > hs) {
+teams[g.away].w += 1;
+teams[g.away].pts += 2;
+teams[g.home].l += 1;
 } else {
-standings[match.home].ties += 1;
-standings[match.home].pts += 1;
-standings[match.away].ties += 1;
-standings[match.away].pts += 1;
+teams[g.home].t += 1;
+teams[g.home].pts += 1;
+teams[g.away].t += 1;
+teams[g.away].pts += 1;
 }
 }
 });
-const sortedTeams = Object.keys(standings).map(teamName => {
-const data = standings[teamName];
-data.diff = data.rf - data.ra;
-return { name: teamName, ...data };
+const standingsArray = Object.values(teams).map(t => {
+t.diff = t.rf - t.ra;
+return t;
 });
-sortedTeams.sort((a, b) => {
+standingsArray.sort((a, b) => {
 if (b.pts !== a.pts) return b.pts - a.pts;
 if (b.diff !== a.diff) return b.diff - a.diff;
 return b.rf - a.rf;
 });
-const tbody = document.getElementById("standings-rows");
+renderStandingsTable(standingsArray);
+renderGamesGrid();
+}
+function renderStandingsTable(standings) {
+const tbody = document.getElementById('standings-body');
 tbody.innerHTML = "";
-sortedTeams.forEach((team, index) => {
-const row = document.createElement("tr");
-row.className = "hover:bg-zinc-800/40 transition border-b border-zinc-800 last:border-0";
-const diffClass = team.diff > 0 ? "text-green-500 font-semibold" : (team.diff < 0 ? "text-red-500" : "text-zinc-500");
-const formattedDiff = team.diff > 0 ? +${team.diff} : team.diff;
-row.innerHTML = `
+if (standings.length === 0) {
+tbody.innerHTML = <tr><td colspan="9" class="text-center">No teams discovered yet.</td></tr>;
+return;
+}
+standings.forEach((team, index) => {
+const tr = document.createElement('tr');
+tr.innerHTML = `
 ${index + 1}
 ${team.name}
-${team.gp}
-${team.wins}
-${team.ties}
-${team.losses}
+${team.w}
+${team.l}
+${team.t}
+${team.pts}
 ${team.rf}
 ${team.ra}
-${formattedDiff}
-${team.pts}
+${team.diff > 0 ? '+' + team.diff : team.diff}
 `;
-tbody.appendChild(row);
+tbody.appendChild(tr);
 });
 }
-window.addEventListener("DOMContentLoaded", () => {
-fetchSpreadsheetData();
-setInterval(fetchSpreadsheetData, 60000);
+function renderGamesGrid() {
+const container = document.getElementById('games-container');
+container.innerHTML = "";
+const filtered = masterGames.filter(g => {
+const isPlayed = g.homeScore !== null && g.awayScore !== null;
+if (currentFilter === 'completed') return isPlayed;
+if (currentFilter === 'upcoming') return !isPlayed;
+return true;
 });
+if (filtered.length === 0) {
+container.innerHTML = <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 30px;">No games match your active selection parameters.</div>;
+return;
+}
+filtered.forEach(g => {
+const isPlayed = g.homeScore !== null && g.awayScore !== null;
+const card = document.createElement('div');
+card.className = 'game-card';
+let statusLabel = <div class="game-status-label">Upcoming Match</div>;
+let homeClass = "";
+let awayClass = "";
+if (isPlayed) {
+statusLabel = <div class="game-status-label live">Final Score</div>;
+if (g.homeScore > g.awayScore) homeClass = "winner";
+if (g.awayScore > g.homeScore) awayClass = "winner";
+}
+card.innerHTML = <div> <div class="game-header"> <span>🗓️ ${g.date}</span> <span>⏰ ${g.time}</span> <span>📍 ${g.diamond}</span> </div> <div class="game-team-row"> <span>${g.home}</span> <span class="game-score ${homeClass}">${g.homeScore !== null ? g.homeScore : '-'}</span> </div> <div class="game-team-row"> <span>${g.away}</span> <span class="game-score ${awayClass}">${g.awayScore !== null ? g.awayScore : '-'}</span> </div> </div> ${statusLabel};
+container.appendChild(card);
+});
+}
+function filterGames(type, btn) {
+currentFilter = type;
+document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+renderGamesGrid();
+}
+window.onload = fetchLeagueData;
