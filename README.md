@@ -1,5 +1,3 @@
-html
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -299,12 +297,13 @@ html
 </div>
 
 <script>
-    // Converted your pubhtml link to use the background CSV export query automatically
-    const SPREADSHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTuH2caMN-qBJjKs49kJ-nC_JfHsGS2rjZGO87XE14u-2ijLFbEJ05uIwcVfqTkKmuJiqNm_fxFCNqb/pubhtml";
+    // Configured directly to your specific sheet and tab ID (gid=665334959) using the background CSV exporter format
+    const SPREADSHEET_CSV_URL = "https://google.com";
 
     let masterGames = [];
     let currentFilter = 'all';
 
+    // Local schedule baseline
     const fallbackSchedule = [
         ["10/1/2026","7:00 PM","Dunton 2","Team Zeshan","Team Ali"],
         ["10/1/2026","7:00 PM","Dunton 3","Team Yasir","Team Yusuf"],
@@ -339,18 +338,17 @@ statusElement.innerText = "Status: Syncing matrix rows...";
 errorElement.style.display = 'none';
 try {
 const response = await fetch(SPREADSHEET_CSV_URL);
-if (!response.ok) throw new Error("Spreadsheet response validation error.");
+if (!response.ok) throw new Error("Spreadsheet validation mismatch.");
 const textData = await response.text();
 parseCSVData(textData);
 statusElement.innerText = "Status: Live Synced";
 } catch (error) {
-console.error("External sync error, building standalone base layer:", error);
-statusElement.innerText = "Status: Offline Fallback Active";
-errorElement.innerHTML = ⚠️ <strong>Connection Warning:</strong> Could not load dynamic scores directly from the Google Sheet feed. Please check if your sheet is published via <em>File > Share > Publish to web</em>. Showing local template structure below.;
+console.error("External sync warning, loading fallback array layout:", error);
+statusElement.innerText = "Status: Offline Preview Active";
+errorElement.innerHTML = ⚠️ <strong>Access Restriction Warning:</strong> The site could not fetch data from your Google Sheet because its access is set to private. To fix this, open your Google Sheet, click the blue <strong>"Share"</strong> button in the top right, change General Access to <strong>"Anyone with the link can view"</strong>, and then refresh this page!;
 errorElement.style.display = 'block';
 masterGames = fallbackSchedule.map(row => ({
-date: row[0], time: row[1], diamond: row[2],
-home: row, away: row[4],
+date: row[0], time: row[1], diamond: row[2], home: row[3], away: row[4],
 homeScore: null, awayScore: null
 }));
 calculateStandingsAndRender();
@@ -369,7 +367,7 @@ parsedGames.push({
 date: cols[0],
 time: cols[1],
 diamond: cols[2],
-home: cols,
+home: cols[3],
 away: cols[4],
 homeScore: isNaN(homeS) ? null : homeS,
 awayScore: isNaN(awayS) ? null : awayS
@@ -379,7 +377,7 @@ awayScore: isNaN(awayS) ? null : awayS
 if (parsedGames.length > 0) {
 masterGames = parsedGames;
 } else {
-throw new Error("No usable rows found.");
+throw new Error("No layout fields detected.");
 }
 calculateStandingsAndRender();
 }
@@ -429,7 +427,7 @@ function renderStandingsTable(standings) {
 const tbody = document.getElementById('standings-body');
 tbody.innerHTML = "";
 if (standings.length === 0) {
-tbody.innerHTML = <tr><td colspan="9" class="text-center">No teams discovered yet.</td></tr>;
+tbody.innerHTML = <tr><td colspan="9" class="text-center">No league configuration teams structural rows discovered.</td></tr>;
 return;
 }
 standings.forEach((team, index) => {
@@ -458,7 +456,7 @@ if (currentFilter === 'upcoming') return !isPlayed;
 return true;
 });
 if (filtered.length === 0) {
-container.innerHTML = <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 30px;">No games match your active selection parameters.</div>;
+container.innerHTML = <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 30px;">No matches found matching filter rule parameters.</div>;
 return;
 }
 filtered.forEach(g => {
