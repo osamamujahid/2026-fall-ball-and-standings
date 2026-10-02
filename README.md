@@ -3,354 +3,322 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>League Dashboard & Schedule</title>
-    <!-- Tailwind CSS -->
+    <title>League Portal & Live Standings</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        .active-tab {
-            border-bottom: 2px solid #2563eb;
-            color: #2563eb;
+        .score-input::-webkit-outer-spin-button,
+        .score-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .score-input {
+            -moz-appearance: textfield;
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-900 antialiased">
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
 
-    <!-- Header / Banner -->
-    <header class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <!-- Header Section -->
+    <header class="bg-blue-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <h1 class="text-3xl font-extrabold tracking-tight">League Schedule & Standings</h1>
-                <p class="text-blue-100 text-sm mt-1">Official Game Center • Fall 2026</p>
+                <h1 class="text-3xl font-bold tracking-tight">League Management Hub</h1>
+                <p class="text-blue-200 text-sm mt-1">Schedules, Live Standings & Venue Directories</p>
             </div>
-            <div class="bg-blue-900/50 px-4 py-2 rounded-lg border border-blue-500/30 text-center sm:text-right">
-                <span class="text-xs text-blue-200 block uppercase font-bold tracking-wider">Point System</span>
-                <span class="text-sm font-semibold">Win: 2 PTS • Tie: 1 PT • Loss: 0 PTS</span>
+            <div class="flex items-center gap-3">
+                <button onclick="resetAllScores()" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded transition text-sm shadow">
+                    Clear All Scores
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- Grid Layout for Live Standings & Quick Stats -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <!-- LEFT/CENTER COLUMNS -->
+        <div class="lg:col-span-2 space-y-8">
             
-            <!-- Standings Table (Takes up 2 columns on large screens) -->
-            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                        🏆 Live Standings
-                    </h2>
-                    <span class="text-xs text-gray-500 italic">Auto-calculated from match scores</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Pos</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Team</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">GP</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">W</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">T</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">L</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">RS</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">RA</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Diff</th>
-                                <th class="px-4 py-3 text-center text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50/50">PTS</th>
-                            </tr>
-                        </thead>
-                        <tbody id="standings-body" class="bg-white divide-y divide-gray-200 text-sm">
-                            <!-- Injected dynamically via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Venue Maps Module -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
-                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    📍 Field Maps & Venues
+            <!-- Weather & Fields Widget Panel -->
+            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    ☀️ Field Venues & Weather Outlook
                 </h2>
                 
-                <!-- Venue Toggles -->
-                <div class="flex bg-gray-100 p-1 rounded-lg mb-4 text-xs font-medium">
-                    <button id="btn-dunton" onclick="switchMap('dunton')" class="flex-1 py-2 text-center rounded-md bg-white shadow-xs text-blue-700 font-bold">
-                        Dunton Fields
-                    </button>
-                    <button id="btn-caa" onclick="switchMap('caa')" class="flex-1 py-2 text-center rounded-md text-gray-600 hover:text-gray-900">
-                        CAA Centre
-                    </button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="p-4 bg-blue-50 border border-blue-100 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-blue-900 text-sm">Mississauga Grounds</p>
+                            <p class="text-xs text-blue-700 mt-0.5">Dunton & Brickyard Status</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xl font-bold text-blue-900">18°C</span>
+                            <span class="block text-[10px] uppercase font-bold text-green-600 tracking-wider">Clear & Playable</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-indigo-900 text-sm">Brampton Grounds</p>
+                            <p class="text-xs text-indigo-700 mt-0.5">CAA Centre Complex Status</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xl font-bold text-indigo-900">17°C</span>
+                            <span class="block text-[10px] uppercase font-bold text-green-600 tracking-wider">Clear & Playable</span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Interactive Map Frame Containers -->
-                <div class="flex-1 min-h-[220px] bg-gray-100 rounded-lg overflow-hidden border border-gray-200 relative mb-3">
-                    <iframe id="map-frame" class="w-full h-full border-0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2888.745482390772!2d-79.67069172341999!3d43.6118318554284!2m3!1f0!2f0!3f0!3m2!1i1024!2i766!4f13.1!3m3!1m2!1s0x882b40673d32cb39%3A0x721db5976b92ff8!2sDunton%20Athletic%20Fields!5e0!3m2!1sen!2sca!4v1710000000000!5m2!1sen!2sca" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <p class="text-xs font-semibold uppercase text-gray-400 tracking-wider mb-2">Venue Navigation Directories</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <a href="https://www.mississauga.ca/events-and-attractions/parks/dunton-athletic-fields/" target="_blank" class="p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded block transition text-center">
+                        <span class="font-bold text-gray-900 block mb-0.5">Dunton Athletic Fields</span>
+                        <span class="text-gray-500">6180 Kennedy Rd, Mississauga</span>
+                    </a>
+                    <a href="https://www.mississauga.ca/events-and-attractions/parks/brickyard-park/" target="_blank" class="p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded block transition text-center">
+                        <span class="font-bold text-gray-900 block mb-0.5">Brickyard Park</span>
+                        <span class="text-gray-500">3061 Clayhill Rd, Mississauga</span>
+                    </a>
+                    <a href="https://caacentre.com/" target="_blank" class="p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded block transition text-center">
+                        <span class="font-bold text-gray-900 block mb-0.5">CAA Centre Complex</span>
+                        <span class="text-gray-500">7575 Kennedy Rd S, Brampton</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Schedule Panel -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center flex-wrap gap-2">
+                    <h2 class="text-xl font-bold text-gray-900">Interactive League Schedule</h2>
+                    <span class="text-xs bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-medium">Input scores to update standings live</span>
                 </div>
 
-                <div id="venue-info" class="text-xs text-gray-600 space-y-1">
-                    <p class="font-bold text-gray-800 text-sm" id="venue-title">Dunton Athletic Fields</p>
-                    <p id="venue-addr">6180 Kennedy Rd, Mississauga, ON L5T 2Z1</p>
-                    <p id="venue-fields" class="text-blue-600 font-medium mt-1">Diamonds: Dunton 2, Dunton 3, Dunton 4</p>
-                </div>
-            </div>
+                <div class="divide-y divide-gray-100" id="schedule-container"></div>
+            </section>
         </div>
 
-        <!-- Schedule Module Section -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div class="border-b border-gray-200 pb-4 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Game Schedule</h2>
-                    <p class="text-gray-500 text-sm">Filter, search, or update match scorecards below</p>
+        <!-- RIGHT COLUMN -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden lg:sticky lg:top-8">
+                <div class="px-6 py-4 bg-gray-100 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-900">Live Standings Leaderboard</h2>
+                    <p class="text-xs text-gray-500 mt-0.5">Win: 2 PTS | Tie: 1 PT | Loss: 0 PTS</p>
                 </div>
                 
-                <!-- Filter Tool Groupings -->
-                <div class="flex flex-wrap items-center gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Search Team</label>
-                        <input type="text" id="search-team" oninput="filterGames()" placeholder="e.g. Yasir" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-40 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Date Filter</label>
-                        <select id="filter-date" onchange="filterGames()" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">All Dates</option>
-                            <option value="10/1/2026">Oct 1, 2026</option>
-                            <option value="10/4/2026">Oct 4, 2026</option>
-                            <option value="10/8/2026">Oct 8, 2026</option>
-                            <option value="10/15/2026">Oct 15, 2026</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Diamond</label>
-                        <select id="filter-diamond" onchange="filterGames()" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">All Fields</option>
-                            <option value="Dunton">Dunton Fields</option>
-                            <option value="CAA">CAA Fields</option>
-                        </select>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-400 text-[11px] font-bold uppercase tracking-wider border-b border-gray-100">
+                                <th class="py-3 px-4">Team</th>
+                                <th class="py-3 px-2 text-center">W-L-T</th>
+                                <th class="py-3 px-2 text-center">Diff</th>
+                                <th class="py-3 px-4 text-center text-blue-900">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="standings-rows" class="divide-y divide-gray-100 text-sm"></tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 text-center">
+                    Tie-breaker logic ranks higher Run Differential (RD) if points match.
                 </div>
             </div>
-
-            <!-- Schedule Cards Grid Content (Mobile friendly layout fallback) -->
-            <div id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Data injected dynamically via JS -->
-            </div>
         </div>
+
     </main>
 
-    <footer class="bg-gray-800 text-gray-400 text-center py-6 mt-12 border-t border-gray-700 text-xs">
-        <p>© 2026 Sports Schedule Hub. Hosted on GitHub Pages.</p>
-    </footer>
-
-    <!-- Main Application Javascript & Schedules Setup -->
     <script>
-        // LEAGUE DATA STORAGE ARRAY
-        // EDIT SCORES HERE: Replace null with numbers (e.g., homeScore: 12, awayScore: 7)
-        const games = [
-            { id: 1, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 2", home: "Team Zeshan", away: "Team Ali", homeScore: null, awayScore: null },
-            { id: 2, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 3", home: "Team Yasir", away: "Team Yusuf", homeScore: null, awayScore: null },
-            { id: 3, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 4", home: "Team Emad", away: "Team Zohaid", homeScore: null, awayScore: null },
-            { id: 4, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 2", home: "Team Ali", away: "Team Emad", homeScore: null, awayScore: null },
-            { id: 5, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 3", home: "Team Yusuf", away: "Team Zeshan", homeScore: null, awayScore: null },
-            { id: 6, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 4", home: "Team Zohaid", away: "Team Yasir", homeScore: null, awayScore: null },
-            
-            { id: 7, date: "10/4/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Ali", away: "Team Yusuf", homeScore: null, awayScore: null },
-            { id: 8, date: "10/4/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Yasir", away: "Team Emad", homeScore: null, awayScore: null },
-            { id: 9, date: "10/4/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Zohaid", away: "Team Zeshan", homeScore: null, awayScore: null },
-            { id: 10, date: "10/4/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Yusuf", away: "Team Zohaid", homeScore: null, awayScore: null },
-            { id: 11, date: "10/4/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Emad", away: "Team Ali", homeScore: null, awayScore: null },
-            { id: 12, date: "10/4/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Zeshan", away: "Team Yasir", homeScore: null, awayScore: null },
-            
-            { id: 13, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Yasir", away: "Team Ali", homeScore: null, awayScore: null },
-            { id: 14, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Zohaid", away: "Team Yusuf", homeScore: null, awayScore: null },
-            { id: 15, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Emad", away: "Team Zeshan", homeScore: null, awayScore: null },
-            { id: 16, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Zeshan", away: "Team Yasir", homeScore: null, awayScore: null },
-            { id: 17, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Ali", away: "Team Zohaid", homeScore: null, awayScore: null },
-            { id: 18, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Yusuf", away: "Team Emad", homeScore: null, awayScore: null },
-            
-            { id: 19, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Yasir", away: "Team Yusuf", homeScore: null, awayScore: null },
-            { id: 20, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Zeshan", away: "Team Emad", homeScore: null, awayScore: null },
-            { id: 21, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Ali", away: "Team Zohaid", homeScore: null, awayScore: null },
-            { id: 22, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Emad", away: "Team Yasir", homeScore: null, awayScore: null },
-            { id: 23, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Zohaid", away: "Team Zeshan", homeScore: null, awayScore: null },
-            { id: 24, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Yusuf", away: "Team Ali", homeScore: null, awayScore: null }
+        const matches = [
+            { id: 1, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 2", home: "Team Zeshan", away: "Team Ali" },
+            { id: 2, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 3", home: "Team Yasir", away: "Team Yusuf" },
+            { id: 3, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 4", home: "Team Emad", away: "Team Zohaid" },
+            { id: 4, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 2", home: "Team Ali", away: "Team Emad" },
+            { id: 5, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 3", home: "Team Yusuf", away: "Team Zeshan" },
+            { id: 6, date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 4", home: "Team Zohaid", away: "Team Yasir" },
+            { id: 7, date: "10/4/2026", time: "6:30 PM", diamond: "Brickyard 1", home: "Team Yasir", away: "Team Ali" },
+            { id: 8, date: "10/4/2026", time: "6:30 PM", diamond: "Brickyard 2", home: "Team Yusuf", away: "Team Emad" },
+            { id: 9, date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 1", home: "Team Zohaid", away: "Team Yasir" },
+            { id: 10, date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 2", home: "Team Zeshan", away: "Team Yusuf" },
+            { id: 11, date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 1", home: "Team Ali", away: "Team Zohaid" },
+            { id: 12, date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 2", home: "Team Emad", away: "Team Zeshan" },
+            { id: 13, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Yasir", away: "Team Yusuf" },
+            { id: 14, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Zeshan", away: "Team Emad" },
+            { id: 15, date: "10/8/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Ali", away: "Team Zohaid" },
+            { id: 16, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Emad", away: "Team Yasir" },
+            { id: 17, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Zohaid", away: "Team Zeshan" },
+            { id: 18, date: "10/8/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Yusuf", away: "Team Ali" },
+            { id: 19, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Zohaid", away: "Team Zeshan" },
+            { id: 20, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Emad", away: "Team Yusuf" },
+            { id: 21, date: "10/15/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Yasir", away: "Team Ali" },
+            { id: 22, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Yusuf", away: "Team Zohaid" },
+            { id: 23, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Ali", away: "Team Emad" },
+            { id: 24, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Zeshan", away: "Team Yasir" }
         ];
 
-        // MAP DIRECTORY COORDINATES INFRASTRUCTURE
-        const mapData = {
-            dunton: {
-                title: "Dunton Athletic Fields",
-                addr: "6180 Kennedy Rd, Mississauga, ON L5T 2Z1",
-                fields: "Diamonds: Dunton 2, Dunton 3, Dunton 4",
-                src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2888.745482390772!2d-79.67069172341999!3d43.6118318554284!2m3!1f0!2f0!3f0!3m2!1i1024!2i766!4f13.1!3m3!1m2!1s0x882b40673d32cb39%3A0x721db5976b92ff8!2sDunton%20Athletic%20Fields!5e0!3m2!1sen!2sca!4v1710000000000!5m2!1sen!2sca"
-            },
-            caa: {
-                title: "CAA Centre Sports Complex",
-                addr: "7575 Kennedy Rd S, Brampton, ON L6W 4T2",
-                fields: "Diamonds: CAA Red, CAA Yellow, CAA Green",
-                src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2886.7266184988755!2d-79.71960242341775!3d43.65385645271813!2m3!1f0!2f0!3f0!3m2!1i1024!2i766!4f13.1!3m3!1m2!1s0x882b3f7f02377b5d%3A0xcfdacdc6bc8cf3fa!2sCAA%20Centre!5e0!3m2!1sen!2sca!4v1710000000000!5m2!1sen!2sca"
-            }
-        };
+        const teamsList = [
+            "Team Zeshan", "Team Ali", "Team Yasir", "Team Yusuf", "Team Emad", "Team Zohaid"
+        ];
 
-        function switchMap(venueKey) {
-            const data = mapData[venueKey];
-            document.getElementById('map-frame').src = data.src;
-            document.getElementById('venue-title').innerText = data.title;
-            document.getElementById('venue-addr').innerText = data.addr;
-            document.getElementById('venue-fields').innerText = data.fields;
+        let scoresState = {};
 
-            // Manage CSS Active classes
-            const isDunton = venueKey === 'dunton';
-            document.getElementById('btn-dunton').className = isDunton ? "flex-1 py-2 text-center rounded-md bg-white shadow-xs text-blue-700 font-bold" : "flex-1 py-2 text-center rounded-md text-gray-600 hover:text-gray-900";
-            document.getElementById('btn-caa').className = !isDunton ? "flex-1 py-2 text-center rounded-md bg-white shadow-xs text-blue-700 font-bold" : "flex-1 py-2 text-center rounded-md text-gray-600 hover:text-gray-900";
+        function initApp() {
+            loadSavedScores();
+            renderSchedule();
+            calculateAndRenderStandings();
         }
 
-        // STANDINGS AUTOMATED COMPILER ENGINE
-        function calculateStandings() {
-            const standings = {};
+        function saveScores() {
+            localStorage.setItem('league_scores_state', JSON.stringify(scoresState));
+        }
 
-            // Initialize all unique teams dynamically
-            games.forEach(g => {
-                [g.home, g.away].forEach(team => {
-                    if (!standings[team]) {
-                        standings[team] = { name: team, gp: 0, w: 0, t: 0, l: 0, rs: 0, ra: 0, diff: 0, pts: 0 };
-                    }
+        function loadSavedScores() {
+            const saved = localStorage.getItem('league_scores_state');
+            if (saved) {
+                try { scoresState = JSON.parse(saved); } catch (e) { scoresState = {}; }
+            }
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById("schedule-container");
+            container.innerHTML = "";
+
+            const groupedByDate = {};
+            matches.forEach(match => {
+                if (!groupedByDate[match.date]) {
+                    groupedByDate[match.date] = [];
+                }
+                groupedByDate[match.date].push(match);
+            });
+
+            for (const date in groupedByDate) {
+                const dateHeader = document.createElement("div");
+                dateHeader.className = "bg-gray-50 px-6 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider border-y border-gray-100";
+                dateHeader.innerText = date;
+                container.appendChild(dateHeader);
+
+                groupedByDate[date].forEach(match => {
+                    const homeVal = scoresState[`${match.id}_home`] !== undefined ? scoresState[`${match.id}_home`] : "";
+                    const awayVal = scoresState[`${match.id}_away`] !== undefined ? scoresState[`${match.id}_away`] : "";
+
+                    const row = document.createElement("div");
+                    row.className = "p-6 hover:bg-gray-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4";
+                    row.innerHTML = `
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 text-xs text-gray-500 font-medium mb-1">
+                                <span>⏰ ${match.time}</span>
+                                <span class="text-gray-300">•</span>
+                                <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-gray-700 rounded font-semibold text-[11px]">${match.diamond}</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm font-semibold text-gray-900 mt-2">
+                                <div class="flex items-center justify-between sm:justify-start gap-4 p-2 bg-gray-50 sm:bg-transparent rounded">
+                                    <span class="min-w-[100px]"><span class="text-xs font-normal text-gray-400 mr-1.5">[H]</span>${match.home}</span>
+                                    <input type="number" min="0" placeholder="-" 
+                                        value="${homeVal}"
+                                        oninput="updateScore(${match.id}, 'home', this.value)"
+                                        class="score-input w-12 text-center bg-white border border-gray-300 rounded p-1 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div class="flex items-center justify-between sm:justify-start gap-4 p-2 bg-gray-50 sm:bg-transparent rounded">
+                                    <span class="min-w-[100px]"><span class="text-xs font-normal text-gray-400 mr-1.5">[A]</span>${match.away}</span>
+                                    <input type="number" min="0" placeholder="-" 
+                                        value="${awayVal}"
+                                        oninput="updateScore(${match.id}, 'away', this.value)"
+                                        class="score-input w-12 text-center bg-white border border-gray-300 rounded p-1 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(row);
                 });
+            }
+        }
+
+        function updateScore(matchId, side, value) {
+            if (value.trim() === "") {
+                delete scoresState[`${matchId}_${side}`];
+            } else {
+                scoresState[`${matchId}_${side}`] = parseInt(value, 10) || 0;
+            }
+            saveScores();
+            calculateAndRenderStandings();
+        }
+
+        function calculateAndRenderStandings() {
+            const standings = {};
+            teamsList.forEach(team => {
+                standings[team] = { wins: 0, losses: 0, ties: 0, rf: 0, ra: 0, diff: 0, pts: 0 };
             });
 
-            // Loop and add points metrics where data scores exist
-            games.forEach(g => {
-                if (g.homeScore !== null && g.awayScore !== null) {
-                    const hs = parseInt(g.homeScore);
-                    const as = parseInt(g.awayScore);
+            matches.forEach(match => {
+                const homeScore = scoresState[`${match.id}_home`];
+                const awayScore = scoresState[`${match.id}_away`];
 
-                    standings[g.home].gp++;
-                    standings[g.away].gp++;
-                    standings[g.home].rs += hs;
-                    standings[g.home].ra += as;
-                    standings[g.away].rs += as;
-                    standings[g.away].ra += hs;
+                if (homeScore !== undefined && awayScore !== undefined) {
+                    const h = parseInt(homeScore, 10);
+                    const a = parseInt(awayScore, 10);
 
-                    if (hs > as) {
-                        standings[g.home].w++;
-                        standings[g.home].pts += 2; // 2 points for a win
-                        standings[g.away].l++;
-                    } else if (as > hs) {
-                        standings[g.away].w++;
-                        standings[g.away].pts += 2;
-                        standings[g.home].l++;
+                    standings[match.home].rf += h;
+                    standings[match.home].ra += a;
+                    standings[match.away].rf += a;
+                    standings[match.away].ra += h;
+
+                    if (h > a) {
+                        standings[match.home].wins += 1;
+                        standings[match.home].pts += 2;
+                        standings[match.away].losses += 1;
+                    } else if (a > h) {
+                        standings[match.away].wins += 1;
+                        standings[match.away].pts += 2;
+                        standings[match.home].losses += 1;
                     } else {
-                        standings[g.home].t++;
-                        standings[g.away].t++;
-                        standings[g.home].pts += 1; // 1 point for a tie
-                        standings[g.away].pts += 1;
+                        standings[match.home].ties += 1;
+                        standings[match.home].pts += 1;
+                        standings[match.away].ties += 1;
+                        standings[match.away].pts += 1;
                     }
                 }
             });
 
-            // Calculate run diff metrics
-            Object.values(standings).forEach(t => t.diff = t.rs - t.ra);
-
-            // Sort standard sports criteria array (PTS -> Diff -> RS)
-            return Object.values(standings).sort((a, b) => {
-                if (b.pts !== a.pts) return b.pts - a.pts;
-                if (b.diff !== a.diff) return b.diff - a.diff;
-                return b.rs - a.rs;
-            });
-        }
-
-        function renderStandings() {
-            const sortedData = calculateStandings();
-            const tbody = document.getElementById('standings-body');
-            tbody.innerHTML = '';
-
-            sortedData.forEach((team, index) => {
-                const tr = document.createElement('tr');
-                tr.className = index % 2 === 0 ? "bg-white" : "bg-gray-50/50";
-                tr.innerHTML = `
-                    <td class="px-4 py-3 font-bold text-gray-500">${index + 1}</td>
-                    <td class="px-4 py-3 font-semibold text-gray-900">${team.name}</td>
-                    <td class="px-3 py-3 text-center text-gray-600">${team.gp}</td>
-                    <td class="px-3 py-3 text-center text-emerald-600 font-medium">${team.w}</td>
-                    <td class="px-3 py-3 text-center text-amber-600 font-medium">${team.t}</td>
-                    <td class="px-3 py-3 text-center text-red-600 font-medium">${team.l}</td>
-                    <td class="px-3 py-3 text-center text-gray-600">${team.rs}</td>
-                    <td class="px-3 py-3 text-center text-gray-600">${team.ra}</td>
-                    <td class="px-3 py-3 text-center font-medium ${team.diff >= 0 ? 'text-gray-700' : 'text-red-500'}">${team.diff > 0 ? '+' + team.diff : team.diff}</td>
-                    <td class="px-4 py-3 text-center font-bold text-blue-600 bg-blue-50/30">${team.pts}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // DYNAMIC SCHEDULE RENDERING & FILTER LOGIC
-        function filterGames() {
-            const searchValue = document.getElementById('search-team').value.toLowerCase();
-            const dateValue = document.getElementById('filter-date').value;
-            const diamondValue = document.getElementById('filter-diamond').value;
-            const container = document.getElementById('schedule-container');
-            container.innerHTML = '';
-
-            const filtered = games.filter(g => {
-                const matchesSearch = g.home.toLowerCase().includes(searchValue) || g.away.toLowerCase().includes(searchValue);
-                const matchesDate = !dateValue || g.date === dateValue;
-                const matchesDiamond = !diamondValue || g.diamond.startsWith(diamondValue);
-                return matchesSearch && matchesDate && matchesDiamond;
+            const sortedTeams = Object.keys(standings).map(teamName => {
+                const data = standings[teamName];
+                data.diff = data.rf - data.ra;
+                return { name: teamName, ...data };
             });
 
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-8 text-gray-400 bg-gray-50 rounded-lg border border-dashed border-gray-300">No scheduled matches match your criteria filters.</div>`;
-                return;
-            }
-
-            filtered.forEach(g => {
-                const isPlayed = g.homeScore !== null && g.awayScore !== null;
-                let scorecardMarkup = '';
-
-                if (isPlayed) {
-                    const homeWinner = parseInt(g.homeScore) > parseInt(g.awayScore);
-                    const awayWinner = parseInt(g.awayScore) > parseInt(g.homeScore);
-                    scorecardMarkup = `
-                        <div class="flex items-center justify-between border-t border-b border-gray-100 py-3 my-2 text-base font-bold">
-                            <span class="${homeWinner ? 'text-emerald-600 font-extrabold' : 'text-gray-700'}">${g.homeScore}</span>
-                            <span class="text-xs uppercase bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-semibold tracking-wider">Final</span>
-                            <span class="${awayWinner ? 'text-emerald-600 font-extrabold' : 'text-gray-700'}">${g.awayScore}</span>
-                        </div>
-                    `;
-                } else {
-                    scorecardMarkup = `
-                        <div class="flex items-center justify-center border-t border-b border-gray-100 py-2.5 my-2 text-xs font-bold text-blue-600">
-                            <span class="bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest border border-blue-100">vs</span>
-                        </div>
-                    `;
+            sortedTeams.sort((teamA, teamB) => {
+                if (teamB.pts !== teamA.pts) {
+                    return teamB.pts - teamA.pts;
                 }
+                return teamB.diff - teamA.diff;
+            });
 
-                const card = document.createElement('div');
-                card.className = "bg-white p-5 rounded-xl border border-gray-200 shadow-2xs hover:shadow-xs transition flex flex-col justify-between";
-                card.innerHTML = `
-                    <div>
-                        <div class="flex justify-between items-start text-xs font-semibold text-gray-400 mb-2">
-                            <span class="bg-gray-100 px-2 py-0.5 rounded-sm text-gray-600">${g.date} • ${g.time}</span>
-                            <span class="text-indigo-600">${g.diamond}</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm font-semibold py-1">
-                            <span class="text-gray-900">${g.home}</span>
-                            <span class="text-xs text-gray-400 uppercase font-normal">Home</span>
-                        </div>
-                        ${scorecardMarkup}
-                        <div class="flex justify-between items-center text-sm font-semibold py-1">
-                            <span class="text-gray-900">${g.away}</span>
-                            <span class="text-xs text-gray-400 uppercase font-normal">Away</span>
-                        </div>
-                    </div>
+            const tbody = document.getElementById("standings-rows");
+            tbody.innerHTML = "";
+
+            sortedTeams.forEach(team => {
+                const row = document.createElement("tr");
+                row.className = "hover:bg-gray-50 transition border-b border-gray-100 last:border-0";
+                
+                const diffClass = team.diff > 0 ? "text-green-600 font-semibold" : (team.diff < 0 ? "text-red-500" : "text-gray-400");
+                const formattedDiff = team.diff > 0 ? `+${team.diff}` : team.diff;
+
+                row.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-gray-900">${team.name}</td>
+                    <td class="py-3 px-2 text-center text-gray-600">${team.wins}-${team.losses}-${team.ties}</td>
+                    <td class="py-3 px-2 text-center ${diffClass}">${formattedDiff}</td>
+                    <td class="py-3 px-4 text-center font-bold text-blue-900 text-base bg-blue-50/50">${team.pts}</td>
                 `;
-                container.appendChild(card);
+                tbody.appendChild(row);
             });
         }
 
-        // INITIAL LOAD INITIALIZATION
-        window.onload = function() {
-            renderStandings();
-            filterGames();
-        };
+        function resetAllScores() {
+            if (confirm("Are you sure you want to completely clear all saved match scores and reset the standings table?")) {
+                scoresState = {};
+                saveScores();
+                renderSchedule();
+                calculateAndRenderStandings();
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", initApp);
     </script>
 </body>
 </html>
