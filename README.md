@@ -50,39 +50,6 @@
             margin-bottom: 10px;
         }
 
-        .sync-panel {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            background-color: white;
-            color: var(--primary);
-            border: none;
-            padding: 10px 20px;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
-        }
-
-        .btn:hover {
-            background-color: #f1f5f9;
-            transform: translateY(-1px);
-        }
-
-        .status-badge {
-            font-size: 0.85rem;
-            padding: 6px 12px;
-            border-radius: 20px;
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
         .section-title {
             font-size: 1.5rem;
             margin: 30px 0 15px 0;
@@ -232,16 +199,6 @@
             background-color: #d1fae5;
             color: #065f46;
         }
-
-        #error-message {
-            background-color: #fee2e2;
-            border: 1px solid #fca5a5;
-            color: #991b1b;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -249,14 +206,8 @@
 <div class="container">
     <header>
         <h1>League Dashboard</h1>
-        <p>Live Scores & Standings tracking platform</p>
-        <div class="sync-panel">
-            <button class="btn" onclick="fetchLeagueData()">Sync Live Data</button>
-            <div class="status-badge" id="sync-status">Status: Initializing...</div>
-        </div>
+        <p>Hardcoded Scores & Standings tracking platform</p>
     </header>
-
-    <div id="error-message"></div>
 
     <h2 class="section-title">🏆 League Standings</h2>
     <div class="card">
@@ -276,9 +227,7 @@
                     </tr>
                 </thead>
                 <tbody id="standings-body">
-                    <tr>
-                        <td colspan="9" class="text-center" style="color: var(--text-light);">Syncing with Google Sheets table...</td>
-                    </tr>
+                    <!-- Rendered via JavaScript -->
                 </tbody>
             </table>
         </div>
@@ -297,90 +246,38 @@
 </div>
 
 <script>
-    // Configured directly to your specific sheet and tab ID (gid=665334959) using the background CSV exporter format
-    const SPREADSHEET_CSV_URL = "https://google.com";
-
-    let masterGames = [];
     let currentFilter = 'all';
 
-    // Local schedule baseline
-    const fallbackSchedule = [
-        ["10/1/2026","7:00 PM","Dunton 2","Team Zeshan","Team Ali"],
-        ["10/1/2026","7:00 PM","Dunton 3","Team Yasir","Team Yusuf"],
-        ["10/1/2026","7:00 PM","Dunton 4","Team Emad","Team Zohaid"],
-        ["10/1/2026","8:30 PM","Dunton 2","Team Ali","Team Emad"],
-        ["10/1/2026","8:30 PM","Dunton 3","Team Yusuf","Team Zeshan"],
-        ["10/1/2026","8:30 PM","Dunton 4","Team Zohaid","Team Yasir"],
-        ["10/4/2026","6:30 PM","Brickyard 1","Team Yasir","Team Ali"],
-        ["10/4/2026","6:30 PM","Brickyard 2","Team Yusuf","Team Emad"],
-        ["10/4/2026","8:00 PM","Brickyard 1","Team Zohaid","Team Yasir"],
-        ["10/4/2026","8:00 PM","Brickyard 2","Team Zeshan","Team Yusuf"],
-        ["10/4/2026","9:30 PM","Brickyard 1","Team Ali","Team Zohaid"],
-        ["10/4/2026","9:30 PM","Brickyard 2","Team Emad","Team Zeshan"],
-        ["10/8/2026","7:00 PM","CAA Red","Team Yasir","Team Yusuf"],
-        ["10/8/2026","7:00 PM","CAA Yellow","Team Zeshan","Team Emad"],
-        ["10/8/2026","7:00 PM","CAA Green","Team Ali","Team Zohaid"],
-        ["10/8/2026","8:30 PM","CAA Red","Team Emad","Team Yasir"],
-        ["10/8/2026","8:30 PM","CAA Yellow","Team Zohaid","Team Zeshan"],
-        ["10/8/2026","8:30 PM","CAA Green","Team Yusuf","Team Ali"],
-        ["10/15/2026","7:00 PM","CAA Red","Team Zohaid","Team Zeshan"],
-        ["10/15/2026","7:00 PM","CAA Yellow","Team Emad","Team Yusuf"],
+    // 📋 UPDATE SCORES HERE: 
+    // Set homeScore and awayScore values to numbers (e.g., 12, 5) to save played games. 
+    // Leave them as null if the match hasn't happened yet!
+    const masterGames = [
+        { date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 2", home: "Team Zeshan", away: "Team Ali", homeScore: 17, awayScore: 18 },
+        { date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 3", home: "Team Yasir", away: "Team Yusuf", homeScore: 17, awayScore: 14 },
+        { date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 4", home: "Team Emad", away: "Team Zohaid", homeScore: 8, awayScore: 11 },
+        { date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 2", home: "Team Ali", away: "Team Emad", homeScore: 20, awayScore: 16 },
+        { date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 3", home: "Team Yusuf", away: "Team Zeshan", homeScore: 16, awayScore: 17 },
+        { date: "10/1/2026", time: "8:30 PM", diamond: "Dunton 4", home: "Team Zohaid", away: "Team Yasir", homeScore: 20, awayScore: 7 },
+        { date: "10/4/2026", time: "6:30 PM", diamond: "Brickyard 1", home: "Team Yasir", away: "Team Ali", homeScore: null, awayScore: null },
+        { date: "10/4/2026", time: "6:30 PM", diamond: "Brickyard 2", home: "Team Yusuf", away: "Team Emad", homeScore: null, awayScore: null },
+        { date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 1", home: "Team Zohaid", away: "Team Yasir", homeScore: null, awayScore: null },
+        { date: "10/4/2026", time: "8:00 PM", diamond: "Brickyard 2", home: "Team Zeshan", away: "Team Yusuf", homeScore: null, awayScore: null },
+        { date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 1", home: "Team Ali", away: "Team Zohaid", homeScore: null, awayScore: null },
+        { date: "10/4/2026", time: "9:30 PM", diamond: "Brickyard 2", home: "Team Emad", away: "Team Zeshan", homeScore: null, awayScore: null },
+        { date: "10/8/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Yasir", away: "Team Yusuf", homeScore: null, awayScore: null },
+        { date: "10/8/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Zeshan", away: "Team Emad", homeScore: null, awayScore: null },
+        { date: "10/8/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Ali", away: "Team Zohaid", homeScore: null, awayScore: null },
+        { date: "10/8/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Emad", away: "Team Yasir", homeScore: null, awayScore: null },
+        { date: "10/8/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Zohaid", away: "Team Zeshan", homeScore: null, awayScore: null },
+        { date: "10/8/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Yusuf", away: "Team Ali", homeScore: null, awayScore: null },
+        { date: "10/15/2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Zohaid", away: "Team Zeshan", homeScore: null, awayScore: null },
+        { date: "10/15/2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Emad", away: "Team Yusuf", homeScore: null, awayScore: null },
+        { date: "10/15/2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Yasir", away: "Team Ali", homeScore: null, awayScore: null },
 Use code with caution.
-["10/15/2026","7:00 PM","CAA Green","Team Yasir","Team Ali"],
-["10/15/2026","8:30 PM","CAA Red","Team Yusuf","Team Zohaid"],
-["10/15/2026","8:30 PM","CAA Yellow","Team Ali","Team Emad"],
-["10/15/2026","8:30 PM","CAA Green","Team Zeshan","Team Yasir"]
+{ date: "10/15/2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Yusuf", away: "Team Zohaid", homeScore: null, awayScore: null },
+{ date: "10/15/2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Ali", away: "Team Emad", homeScore: null, awayScore: null },
+{ date: "10/15/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Zeshan", away: "Team Yasir", homeScore: null, awayScore: null }
 ];
-async function fetchLeagueData() {
-const statusElement = document.getElementById('sync-status');
-const errorElement = document.getElementById('error-message');
-statusElement.innerText = "Status: Syncing matrix rows...";
-errorElement.style.display = 'none';
-try {
-const response = await fetch(SPREADSHEET_CSV_URL);
-if (!response.ok) throw new Error("Spreadsheet validation mismatch.");
-const textData = await response.text();
-parseCSVData(textData);
-statusElement.innerText = "Status: Live Synced";
-} catch (error) {
-console.error("External sync warning, loading fallback array layout:", error);
-statusElement.innerText = "Status: Offline Preview Active";
-errorElement.innerHTML = ⚠️ <strong>Access Restriction Warning:</strong> The site could not fetch data from your Google Sheet because its access is set to private. To fix this, open your Google Sheet, click the blue <strong>"Share"</strong> button in the top right, change General Access to <strong>"Anyone with the link can view"</strong>, and then refresh this page!;
-errorElement.style.display = 'block';
-masterGames = fallbackSchedule.map(row => ({
-date: row[0], time: row[1], diamond: row[2], home: row[3], away: row[4],
-homeScore: null, awayScore: null
-}));
-calculateStandingsAndRender();
-}
-}
-function parseCSVData(csvText) {
-const lines = csvText.split(/\r?\n/);
-const parsedGames = [];
-for (let i = 1; i < lines.length; i++) {
-if (!lines[i].trim()) continue;
-const cols = lines[i].split(/,(?=(?:(?:[^"]"){2})[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
-if (cols.length >= 5) {
-const homeS = (cols[5] !== undefined && cols[5] !== "") ? parseInt(cols[5], 10) : null;
-const awayS = (cols[6] !== undefined && cols[6] !== "") ? parseInt(cols[6], 10) : null;
-parsedGames.push({
-date: cols[0],
-time: cols[1],
-diamond: cols[2],
-home: cols[3],
-away: cols[4],
-homeScore: isNaN(homeS) ? null : homeS,
-awayScore: isNaN(awayS) ? null : awayS
-});
-}
-}
-if (parsedGames.length > 0) {
-masterGames = parsedGames;
-} else {
-throw new Error("No layout fields detected.");
-}
-calculateStandingsAndRender();
-}
 function calculateStandingsAndRender() {
 const teams = {};
 masterGames.forEach(g => {
@@ -415,6 +312,7 @@ const standingsArray = Object.values(teams).map(t => {
 t.diff = t.rf - t.ra;
 return t;
 });
+// Sorting rule: Points -> Run Differential -> Runs For
 standingsArray.sort((a, b) => {
 if (b.pts !== a.pts) return b.pts - a.pts;
 if (b.diff !== a.diff) return b.diff - a.diff;
@@ -427,7 +325,7 @@ function renderStandingsTable(standings) {
 const tbody = document.getElementById('standings-body');
 tbody.innerHTML = "";
 if (standings.length === 0) {
-tbody.innerHTML = <tr><td colspan="9" class="text-center">No league configuration teams structural rows discovered.</td></tr>;
+tbody.innerHTML = <tr><td colspan="9" class="text-center">No league teams detected.</td></tr>;
 return;
 }
 standings.forEach((team, index) => {
@@ -456,7 +354,7 @@ if (currentFilter === 'upcoming') return !isPlayed;
 return true;
 });
 if (filtered.length === 0) {
-container.innerHTML = <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 30px;">No matches found matching filter rule parameters.</div>;
+container.innerHTML = <div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 30px;">No matches found matching filter parameters.</div>;
 return;
 }
 filtered.forEach(g => {
@@ -481,4 +379,4 @@ document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active
 btn.classList.add('active');
 renderGamesGrid();
 }
-window.onload = fetchLeagueData;
+window.onload = calculateStandingsAndRender;
