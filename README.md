@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>League Portal & Live Standings</title>
+    <!-- Tailwind CSS for modern, clean UI layout styling -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         .score-input::-webkit-outer-spin-button,
@@ -33,9 +34,9 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
         
-        <!-- LEFT/CENTER COLUMNS -->
+        <!-- LEFT/CENTER COLUMNS: Schedule & Facilities (Takes 2 cols on wide screens) -->
         <div class="lg:col-span-2 space-y-8">
             
             <!-- Weather & Fields Widget Panel -->
@@ -44,6 +45,7 @@
                     ☀️ Field Venues & Weather Outlook
                 </h2>
                 
+                <!-- Weather Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div class="p-4 bg-blue-50 border border-blue-100 rounded-lg flex justify-between items-center">
                         <div>
@@ -67,6 +69,7 @@
                     </div>
                 </div>
 
+                <!-- Navigation Directories -->
                 <p class="text-xs font-semibold uppercase text-gray-400 tracking-wider mb-2">Venue Navigation Directories</p>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                     <a href="https://www.mississauga.ca/events-and-attractions/parks/dunton-athletic-fields/" target="_blank" class="p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded block transition text-center">
@@ -84,19 +87,21 @@
                 </div>
             </section>
 
-            <!-- Schedule Panel -->
+            <!-- Schedule & Score Entry Panel -->
             <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="px-6 py-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center flex-wrap gap-2">
                     <h2 class="text-xl font-bold text-gray-900">Interactive League Schedule</h2>
                     <span class="text-xs bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-medium">Input scores to update standings live</span>
                 </div>
 
-                <div class="divide-y divide-gray-100" id="schedule-container"></div>
+                <div class="divide-y divide-gray-100" id="schedule-container">
+                    <!-- Schedule items will be rendered here dynamically via JS -->
+                </div>
             </section>
         </div>
 
-        <!-- RIGHT COLUMN -->
-        <div class="lg:col-span-1">
+        <!-- RIGHT COLUMN: Standings Table Leaderboard (Expanded to fit new structural breakdown) -->
+        <div class="lg:col-span-2">
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden lg:sticky lg:top-8">
                 <div class="px-6 py-4 bg-gray-100 border-b border-gray-200">
                     <h2 class="text-xl font-bold text-gray-900">Live Standings Leaderboard</h2>
@@ -106,19 +111,28 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-gray-50 text-gray-400 text-[11px] font-bold uppercase tracking-wider border-b border-gray-100">
-                                <th class="py-3 px-4">Team</th>
-                                <th class="py-3 px-2 text-center">W-L-T</th>
-                                <th class="py-3 px-2 text-center">Diff</th>
-                                <th class="py-3 px-4 text-center text-blue-900">Pts</th>
+                            <tr class="bg-gray-50 text-gray-500 text-[11px] font-bold uppercase tracking-wider border-b border-gray-200 text-center">
+                                <th class="py-3 px-3 text-left w-12">Pos</th>
+                                <th class="py-3 px-4 text-left">Team</th>
+                                <th class="py-3 px-2">GP</th>
+                                <th class="py-3 px-2">W</th>
+                                <th class="py-3 px-2">T</th>
+                                <th class="py-3 px-2">L</th>
+                                <th class="py-3 px-2">RS</th>
+                                <th class="py-3 px-2">RA</th>
+                                <th class="py-3 px-2">Diff</th>
+                                <th class="py-3 px-4 text-blue-950 bg-blue-50/50">PTS</th>
                             </tr>
                         </thead>
-                        <tbody id="standings-rows" class="divide-y divide-gray-100 text-sm"></tbody>
+                        <tbody id="standings-rows" class="divide-y divide-gray-100 text-sm text-center">
+                            <!-- Rows loaded and sorted dynamically via JavaScript -->
+                        </tbody>
                     </table>
                 </div>
 
+                <!-- Footer breakdown component within standings -->
                 <div class="p-4 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 text-center">
-                    Tie-breaker logic ranks higher Run Differential (RD) if points match.
+                    Tie-breaker logic ranks higher Run Differential (Diff) if points match.
                 </div>
             </div>
         </div>
@@ -126,6 +140,7 @@
     </main>
 
     <script>
+        // Master schedule database structured array exactly matching provided data
         const matches = [
             { id: 1, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 2", home: "Team Zeshan", away: "Team Ali" },
             { id: 2, date: "10/1/2026", time: "7:00 PM", diamond: "Dunton 3", home: "Team Yasir", away: "Team Yusuf" },
@@ -153,18 +168,22 @@
             { id: 24, date: "10/15/2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Zeshan", away: "Team Yasir" }
         ];
 
+        // Unique core team database identity map
         const teamsList = [
             "Team Zeshan", "Team Ali", "Team Yasir", "Team Yusuf", "Team Emad", "Team Zohaid"
         ];
 
+        // Object containing runtime configurations tracking input values state persistently
         let scoresState = {};
 
+        // Run application setup initialization mapping elements
         function initApp() {
             loadSavedScores();
             renderSchedule();
             calculateAndRenderStandings();
         }
 
+        // Save data to localStorage to prevent data loss on page refreshes
         function saveScores() {
             localStorage.setItem('league_scores_state', JSON.stringify(scoresState));
         }
@@ -176,6 +195,7 @@
             }
         }
 
+        // Render data loop tracking dates systematically inside schedule card list UI container
         function renderSchedule() {
             const container = document.getElementById("schedule-container");
             container.innerHTML = "";
@@ -243,7 +263,7 @@
         function calculateAndRenderStandings() {
             const standings = {};
             teamsList.forEach(team => {
-                standings[team] = { wins: 0, losses: 0, ties: 0, rf: 0, ra: 0, diff: 0, pts: 0 };
+                standings[team] = { gp: 0, wins: 0, losses: 0, ties: 0, rf: 0, ra: 0, diff: 0, pts: 0 };
             });
 
             matches.forEach(match => {
@@ -254,6 +274,8 @@
                     const h = parseInt(homeScore, 10);
                     const a = parseInt(awayScore, 10);
 
+                    standings[match.home].gp += 1;
+                    standings[match.away].gp += 1;
                     standings[match.home].rf += h;
                     standings[match.home].ra += a;
                     standings[match.away].rf += a;
@@ -283,16 +305,15 @@
             });
 
             sortedTeams.sort((teamA, teamB) => {
-                if (teamB.pts !== teamA.pts) {
-                    return teamB.pts - teamA.pts;
-                }
-                return teamB.diff - teamA.diff;
+                if (teamB.pts !== teamA.pts) return teamB.pts - teamA.pts;
+                if (teamB.diff !== teamA.diff) return teamB.diff - teamA.diff;
+                return teamB.rf - teamA.rf; 
             });
 
             const tbody = document.getElementById("standings-rows");
             tbody.innerHTML = "";
 
-            sortedTeams.forEach(team => {
+            sortedTeams.forEach((team, index) => {
                 const row = document.createElement("tr");
                 row.className = "hover:bg-gray-50 transition border-b border-gray-100 last:border-0";
                 
@@ -300,10 +321,16 @@
                 const formattedDiff = team.diff > 0 ? `+${team.diff}` : team.diff;
 
                 row.innerHTML = `
-                    <td class="py-3 px-4 font-bold text-gray-900">${team.name}</td>
-                    <td class="py-3 px-2 text-center text-gray-600">${team.wins}-${team.losses}-${team.ties}</td>
-                    <td class="py-3 px-2 text-center ${diffClass}">${formattedDiff}</td>
-                    <td class="py-3 px-4 text-center font-bold text-blue-900 text-base bg-blue-50/50">${team.pts}</td>
+                    <td class="py-3 px-3 text-left font-medium text-gray-400">${index + 1}</td>
+                    <td class="py-3 px-4 text-left font-bold text-gray-900">${team.name}</td>
+                    <td class="py-3 px-2 font-semibold text-gray-700">${team.gp}</td>
+                    <td class="py-3 px-2 text-green-600">${team.wins}</td>
+                    <td class="py-3 px-2 text-blue-500">${team.ties}</td>
+                    <td class="py-3 px-2 text-red-500">${team.losses}</td>
+                    <td class="py-3 px-2 text-gray-600">${team.rf}</td>
+                    <td class="py-3 px-2 text-gray-600">${team.ra}</td>
+                    <td class="py-3 px-2 ${diffClass}">${formattedDiff}</td>
+                    <td class="py-3 px-4 font-bold text-blue-900 text-base bg-blue-50/50">${team.pts}</td>
                 `;
                 tbody.appendChild(row);
             });
