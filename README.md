@@ -252,7 +252,7 @@
         { date: "2026-10-04", week: "Week 2: Sunday, October 4, 2026", time: "6:30 PM", diamond: "Brickyard 2", home: "Team Yusuf", away: "Team Emad", homeScore: 19, awayScore: 18 },
         { date: "2026-10-04", week: "Week 2: Sunday, October 4, 2026", time: "8:00 PM", diamond: "Brickyard 1", home: "Team Zohaid", away: "Team Yasir", homeScore: 7, awayScore: 11 },
         { date: "2026-10-04", week: "Week 2: Sunday, October 4, 2026", time: "8:00 PM", diamond: "Brickyard 2", home: "Team Zeshan", away: "Team Yusuf", homeScore: 17, awayScore: 19 },
-        { date: "2026-10-04", week: "Week 2: Sunday, October 4, 2026", time: "9:30 PM", diamond: "Brickyard 1", home: "Team Ali", away: "Team Zohaid", homeScore: 11, awayScore: 6 },
+        { date: "2026-10-04", week: "Week 2: Sunday, October 4, 2026", time: "9:30 PM", diamond: "Brickyard 1", home: "Team Ali", away: "Team Zohaid", homeScore: 6, awayScore: 11 },
         { date: "2026-10-04", week: "Week 2: Sunday, October 4, 2026", time: "9:30 PM", diamond: "Brickyard 2", home: "Team Emad", away: "Team Zeshan", homeScore: 15, awayScore: 14 },
 
         // Week 3: Oct 08, 2026
