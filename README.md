@@ -258,7 +258,7 @@
         // Week 3: Oct 08, 2026
         { date: "2026-10-08", week: "Week 3: Thursday, October 8, 2026", time: "7:00 PM", diamond: "CAA Red", home: "Team Yasir", away: "Team Yusuf", homeScore: 19, awayScore: 9 },
         { date: "2026-10-08", week: "Week 3: Thursday, October 8, 2026", time: "7:00 PM", diamond: "CAA Yellow", home: "Team Zeshan", away: "Team Emad", homeScore: 13, awayScore: 17 },
-        { date: "2026-10-08", week: "Week 3: Thursday, October 8, 2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Ali", away: "Team Zohaid", homeScore: 6, awayScore: 11 },
+        { date: "2026-10-08", week: "Week 3: Thursday, October 8, 2026", time: "7:00 PM", diamond: "CAA Green", home: "Team Ali", away: "Team Zohaid", homeScore: 11, awayScore: 6 },
         { date: "2026-10-08", week: "Week 3: Thursday, October 8, 2026", time: "8:30 PM", diamond: "CAA Red", home: "Team Emad", away: "Team Yasir", homeScore: 13, awayScore: 18 },
         { date: "2026-10-08", week: "Week 3: Thursday, October 8, 2026", time: "8:30 PM", diamond: "CAA Yellow", home: "Team Zohaid", away: "Team Zeshan", homeScore: 18, awayScore: 14 },
         { date: "2026-10-08", week: "Week 3: Thursday, October 8, 2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Yusuf", away: "Team Ali", homeScore: 15, awayScore: 21 },
