@@ -264,12 +264,12 @@
         { date: "2026-10-08", week: "Week 3: Thursday, October 8, 2026", time: "8:30 PM", diamond: "CAA Green", home: "Team Yusuf", away: "Team Ali", homeScore: 15, awayScore: 21 },
 
         // Week 4: Oct 15, 2026
-        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "6:40 PM", diamond: "CAA Red", home: "Team Zohaid", away: "Team Zeshan", homeScore: null, awayScore: null },
-        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "6:40 PM", diamond: "CAA Yellow", home: "Team Emad", away: "Team Yusuf", homeScore: null, awayScore: null },
-        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "6:40 PM", diamond: "CAA Green", home: "Team Yasir", away: "Team Ali", homeScore: null, awayScore: null },
-        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "8:10 PM", diamond: "CAA Red", home: "Team Yusuf", away: "Team Zohaid", homeScore: null, awayScore: null },
-        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "8:10 PM", diamond: "CAA Yellow", home: "Team Ali", away: "Team Emad", homeScore: null, awayScore: null },
-        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "8:10 PM", diamond: "CAA Green", home: "Team Zeshan", away: "Team Yasir", homeScore: null, awayScore: null }
+        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "6:40 PM", diamond: "CAA Red", home: "Team Zohaid", away: "Team Zeshan", homeScore: 18, awayScore: 11 },
+        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "6:40 PM", diamond: "CAA Yellow", home: "Team Emad", away: "Team Yusuf", homeScore: 15, awayScore: 10 },
+        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "6:40 PM", diamond: "CAA Green", home: "Team Yasir", away: "Team Ali", homeScore: 13, awayScore: 12 },
+        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "8:10 PM", diamond: "CAA Red", home: "Team Yusuf", away: "Team Zohaid", homeScore: 8, awayScore: 21 },
+        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "8:10 PM", diamond: "CAA Yellow", home: "Team Ali", away: "Team Emad", homeScore: 10, awayScore: 18 },
+        { date: "2026-10-15", week: "Week 4: Thursday, October 15, 2026", time: "8:10 PM", diamond: "CAA Green", home: "Team Zeshan", away: "Team Yasir", homeScore: 17, awayScore: 18 }
     ];
 
     // Core Processing Engine
